@@ -33,7 +33,7 @@ public partial class MainWindowViewModel : ObservableObject
     [RelayCommand]
     private void SetSelectedItem()
     {
-        SelectedItem = CourseViewModels.FirstOrDefault(x => x.IsSelected)!;
+        SetSelectedItemOrDefault();
     }
 
     private async Task LoadCoursesViewAsync()
@@ -49,7 +49,21 @@ public partial class MainWindowViewModel : ObservableObject
         var viewModels = courses.Select(course => new CourseViewModel(_courseService, course));
         
         CourseViewModels = new ObservableCollection<CourseViewModel>(viewModels);
-        
-        SelectedItem = CourseViewModels.FirstOrDefault(x => x.IsSelected)!;
+    }
+
+    private void SetSelectedItemOrDefault()
+    {
+        foreach (var courseViewModel in CourseViewModels)
+        {
+            if (courseViewModel.IsSelected)
+            {
+                SelectedItem = courseViewModel;
+                return;
+            }
+
+            SelectedItem = courseViewModel.GroupsByCourseViews.FirstOrDefault(x => x.IsSelected);
+
+            if (SelectedItem is not null) return;
+        }
     }
 }
