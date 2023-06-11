@@ -5,11 +5,21 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:University.WPF"
         xmlns:vm="clr-namespace:University.WPF.ViewModels"
+        xmlns:uc="clr-namespace:University.WPF.Views"
         xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
         mc:Ignorable="d"
         Title="University" Height="450" Width="800"
         d:DataContext="{d:DesignInstance Type=vm:MainWindowViewModel}"
         FontSize="18">
+    
+    <Window.Resources>
+        <DataTemplate DataType="{x:Type vm:CourseViewModel}">
+            <uc:CoursesView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:GroupViewModel}">
+            <uc:GroupsView/>
+        </DataTemplate>
+    </Window.Resources>
     
     <Grid ShowGridLines="True">
         <Grid.ColumnDefinitions>
@@ -20,8 +30,6 @@
             <RowDefinition Height="*"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
-        
-        <!-- TreeView -->
         
         <TreeView Grid.Row="0"
                   Grid.Column="0"
@@ -53,6 +61,10 @@
                    Grid.Column="0"
                    Text="{Binding SelectedItem.Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
         
+        <ContentControl Grid.Row="1"
+                        Grid.Column="1"
+                        Content="{Binding SelectedItem}"/>
+        
         <DataGrid Grid.Row="0"
                   Grid.Column="1"
                   ItemsSource="{Binding CoursesView}"
@@ -67,6 +79,9 @@
                 <DataGridTextColumn Width="*" 
                                     Header="Course" 
                                     Binding="{Binding Name}"/>
+                <DataGridTextColumn Width="*" 
+                                    Header="Description" 
+                                    Binding="{Binding Description}"/>
             </DataGrid.Columns>
             
         </DataGrid>

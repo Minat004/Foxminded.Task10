@@ -18,6 +18,7 @@ public partial class CourseViewModel : UnitedEntityViewModel
     {
         _courseService = courseService;
         _course = course;
+        
         LoadGroupsByCourseAsync().GetAwaiter();
     }
 
