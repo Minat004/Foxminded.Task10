@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:University.WPF"
         xmlns:vm="clr-namespace:University.WPF.ViewModels"
+        xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
         mc:Ignorable="d"
         Title="University" Height="450" Width="800"
         d:DataContext="{d:DesignInstance Type=vm:MainWindowViewModel}"
@@ -17,29 +18,40 @@
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
         
         <!-- TreeView -->
         
         <TreeView Grid.Row="0"
                   Grid.Column="0"
-                  ItemsSource="{Binding CourseViewModels}">
+                  ItemsSource="{Binding CourseViewModels, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+            
+            <b:Interaction.Triggers>
+                <b:EventTrigger EventName="SelectedItemChanged">
+                    <b:InvokeCommandAction
+                        Command="{Binding SetSelectedItemCommand}"/>
+                </b:EventTrigger>
+            </b:Interaction.Triggers>
+            
+            <TreeView.ItemContainerStyle>
+                <Style TargetType="TreeViewItem">
+                    <Setter Property="IsSelected" 
+                            Value="{Binding IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                </Style>
+            </TreeView.ItemContainerStyle>
+            
             <TreeView.ItemTemplate>
                 <HierarchicalDataTemplate ItemsSource="{Binding GroupsByCourseViews}">
-                    <TextBlock Text="{Binding Name}"/>
+                <TextBlock Text="{Binding Name}"/>
                 </HierarchicalDataTemplate>
             </TreeView.ItemTemplate>
-            <!-- <TreeView.ItemTemplate> -->
-            <!--     <HierarchicalDataTemplate ItemsSource="{Binding GroupsByCourseViews}" DataType="{x:Type vm:CourseViewModel}"> -->
-            <!--         <TextBlock Text="{Binding Name}"/> -->
-            <!--         <HierarchicalDataTemplate.ItemTemplate> -->
-            <!--             <DataTemplate DataType="{x:Type vm:GroupViewModel}"> -->
-            <!--                 <TextBlock Text="{Binding Name}"/> -->
-            <!--             </DataTemplate> -->
-            <!--         </HierarchicalDataTemplate.ItemTemplate> -->
-            <!--     </HierarchicalDataTemplate> -->
-            <!-- </TreeView.ItemTemplate> -->
+
         </TreeView>
+        
+        <TextBlock Grid.Row="1" 
+                   Grid.Column="0"
+                   Text="{Binding SelectedItem.Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
         
         <DataGrid Grid.Row="0"
                   Grid.Column="1"

@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using University.Core.Interfaces;
 using University.Core.Models;
 using University.WPF.GenericCollections;
@@ -23,7 +25,16 @@ public partial class MainWindowViewModel : ObservableObject
     private ObservableCollectionView<Course> coursesView = new(new List<Course>());
 
     [ObservableProperty]
-    private ObservableCollectionView<CourseViewModel> courseViewModels = new(new List<CourseViewModel>());
+    private ObservableCollection<CourseViewModel> courseViewModels = new(new List<CourseViewModel>());
+
+    [ObservableProperty] 
+    private UnitedEntityViewModel? selectedItem;
+
+    [RelayCommand]
+    private void SetSelectedItem()
+    {
+        SelectedItem = CourseViewModels.FirstOrDefault(x => x.IsSelected)!;
+    }
 
     private async Task LoadCoursesViewAsync()
     {
@@ -35,8 +46,10 @@ public partial class MainWindowViewModel : ObservableObject
     private async Task LoadCourseViewModelsAsync()
     {
         var courses = await _courseService.GetAllAsync();
-        var viewModels = courses.Select(course => new CourseViewModel(_courseService, course)).ToList();
+        var viewModels = courses.Select(course => new CourseViewModel(_courseService, course));
         
-        CourseViewModels = new ObservableCollectionView<CourseViewModel>(viewModels);
+        CourseViewModels = new ObservableCollection<CourseViewModel>(viewModels);
+        
+        SelectedItem = CourseViewModels.FirstOrDefault(x => x.IsSelected)!;
     }
 }

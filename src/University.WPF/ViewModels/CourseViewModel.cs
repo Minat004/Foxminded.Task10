@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -21,13 +22,13 @@ public partial class CourseViewModel : UnitedEntityViewModel
     }
 
     [ObservableProperty]
-    private ObservableCollectionView<GroupViewModel> groupsByCourseViews = new(new List<GroupViewModel>());
+    private ObservableCollection<GroupViewModel> groupsByCourseViews = new(new List<GroupViewModel>());
     
     private async Task LoadGroupsByCourseAsync()
     {
         var courses = await _courseService.GetCourseGroupsAsync(_course.Id);
         var viewModels = courses.Select(group => new GroupViewModel(group)).ToList();
 
-        GroupsByCourseViews = new ObservableCollectionView<GroupViewModel>(viewModels);
+        GroupsByCourseViews = new ObservableCollection<GroupViewModel>(viewModels);
     }
 }
