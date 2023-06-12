@@ -6,13 +6,44 @@
              xmlns:local="clr-namespace:University.WPF.Views"
              xmlns:vm="clr-namespace:University.WPF.ViewModels"
              mc:Ignorable="d"
-             d:DesignHeight="300" d:DesignWidth="300"
-             d:DataContext="{d:DesignInstance Type=vm:MainWindowViewModel}">
+             d:DataContext="{d:DesignInstance Type=vm:CourseViewModel}"
+             d:DesignHeight="300" d:DesignWidth="300">
     
     <Grid>
         
-        <TextBlock Text="Groups"/>
-        <TextBlock Text="{Binding SelectedItem.Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+        </Grid.RowDefinitions>
+        
+        <TextBlock Grid.Row="1" Text="{Binding Name}"/>
+        <DataGrid Grid.Row="2"
+                  ItemsSource="{Binding GroupsByCourseViews}"
+                  AutoGenerateColumns="False"
+                  CanUserAddRows="False"
+                  CanUserDeleteRows="False">
+            
+            <DataGrid.Columns>
+                
+                <DataGridTextColumn Width="Auto" 
+                                    Header="Id" 
+                                    Binding="{Binding Id}"/>
+                <DataGridTextColumn Width="*" 
+                                    Header="Name" 
+                                    Binding="{Binding Name}"/>
+                <!-- <DataGridTextColumn Width="*"  -->
+                <!--                     Header="Course"  -->
+                <!--                     Binding="{Binding CourseName}"/> -->
+                <!-- <DataGridTextColumn Width="*"  -->
+                <!--                     Header="Teacher"  -->
+                <!--                     Binding="{Binding TeacherFullName}"/> -->
+            </DataGrid.Columns>
+            
+        </DataGrid>
         
     </Grid>
     

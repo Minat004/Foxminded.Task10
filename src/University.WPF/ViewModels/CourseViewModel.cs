@@ -12,11 +12,16 @@ namespace University.WPF.ViewModels;
 public partial class CourseViewModel : UnitedEntityViewModel
 {
     private readonly ICourseService<Course> _courseService;
+    private readonly IGroupService<Group> _groupService;
     private readonly Course _course;
 
-    public CourseViewModel(ICourseService<Course> courseService, Course course) : base(course.Id, course.Name)
+    public CourseViewModel(
+        ICourseService<Course> courseService,
+        IGroupService<Group> groupService,
+        Course course) : base(course.Id, course.Name)
     {
         _courseService = courseService;
+        _groupService = groupService;
         _course = course;
         
         LoadGroupsByCourseAsync().GetAwaiter();
@@ -28,7 +33,7 @@ public partial class CourseViewModel : UnitedEntityViewModel
     private async Task LoadGroupsByCourseAsync()
     {
         var courses = await _courseService.GetCourseGroupsAsync(_course.Id);
-        var viewModels = courses.Select(group => new GroupViewModel(group)).ToList();
+        var viewModels = courses.Select(group => new GroupViewModel(_groupService, group)).ToList();
 
         GroupsByCourseViews = new ObservableCollection<GroupViewModel>(viewModels);
     }
