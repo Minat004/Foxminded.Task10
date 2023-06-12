@@ -1,4 +1,6 @@
-﻿namespace University.Core.Models;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace University.Core.Models;
 
 public partial class Student
 {
