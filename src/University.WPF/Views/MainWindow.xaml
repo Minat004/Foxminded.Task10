@@ -33,7 +33,7 @@
         
         <TreeView Grid.Row="0"
                   Grid.Column="0"
-                  ItemsSource="{Binding CourseViewModels, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                  ItemsSource="{Binding CourseViewModels}">
             
             <b:Interaction.Triggers>
                 <b:EventTrigger EventName="SelectedItemChanged">
@@ -45,7 +45,7 @@
             <TreeView.ItemContainerStyle>
                 <Style TargetType="TreeViewItem">
                     <Setter Property="IsSelected" 
-                            Value="{Binding IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                            Value="{Binding IsSelected}"/>
                 </Style>
             </TreeView.ItemContainerStyle>
             
@@ -59,7 +59,7 @@
         
         <TextBlock Grid.Row="1" 
                    Grid.Column="0"
-                   Text="{Binding SelectedItem.Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                   Text="{Binding SelectedItem.Name}"/>
         
         <ContentControl Grid.Row="1"
                         Grid.Column="1"

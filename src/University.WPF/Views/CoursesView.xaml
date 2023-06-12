@@ -12,7 +12,7 @@
     <Grid>
         
         <TextBlock Text="Groups"/>
-        <TextBlock Text="{Binding SelectedItem.Name}"/>
+        <TextBlock Text="{Binding SelectedItem.Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
         
     </Grid>
     
