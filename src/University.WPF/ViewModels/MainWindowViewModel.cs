@@ -13,10 +13,14 @@ namespace University.WPF.ViewModels;
 public partial class MainWindowViewModel : ObservableObject
 {
     private readonly ICourseService<Course> _courseService;
+    private readonly IGroupService<Group> _groupService;
 
-    public MainWindowViewModel(ICourseService<Course> courseService)
+    public MainWindowViewModel(
+        ICourseService<Course> courseService,
+        IGroupService<Group> groupService)
     {
         _courseService = courseService;
+        _groupService = groupService;
         LoadCoursesViewAsync().GetAwaiter();
         LoadCourseViewModelsAsync().GetAwaiter();
     }
@@ -46,7 +50,8 @@ public partial class MainWindowViewModel : ObservableObject
     private async Task LoadCourseViewModelsAsync()
     {
         var courses = await _courseService.GetAllAsync();
-        var viewModels = courses.Select(course => new CourseViewModel(_courseService, course));
+        var viewModels = courses.Select(course => 
+            new CourseViewModel(_courseService, _groupService, course));
         
         CourseViewModels = new ObservableCollection<CourseViewModel>(viewModels);
     }
