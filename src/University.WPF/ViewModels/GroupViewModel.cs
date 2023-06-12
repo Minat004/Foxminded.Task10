@@ -18,16 +18,25 @@ public partial class GroupViewModel : UnitedEntityViewModel
         _groupService = groupService;
         _group = group;
 
+        CourseName = group.Course!.Name;
+        TeacherFullName = $"{group.Teacher!.FirstName} {group.Teacher.LastName}";
+
         LoadGroupsByCourseAsync().GetAwaiter();
     }
+
+    [ObservableProperty] 
+    private string? courseName;
+    
+    [ObservableProperty] 
+    private string teacherFullName;
     
     [ObservableProperty]
     private ObservableCollection<StudentViewModel> studentsByGroupViews = new(new List<StudentViewModel>());
     
     private async Task LoadGroupsByCourseAsync()
     {
-        var groups = await _groupService.GetGroupStudentsAsync(_group.Id);
-        var viewModels = groups.Select(student => new StudentViewModel(student)).ToList();
+        var students = await _groupService.GetGroupStudentsAsync(_group.Id);
+        var viewModels = students.Select(student => new StudentViewModel(student)).ToList();
 
         StudentsByGroupViews = new ObservableCollection<StudentViewModel>(viewModels);
     }

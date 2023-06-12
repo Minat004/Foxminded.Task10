@@ -23,6 +23,9 @@ public class CourseRepository : ICourseRepository<Course>
     public async Task<IEnumerable<Group>> GetCourseGroupsAsync(int courseId)
     {
         await using var context = await _dbContextFactory.CreateDbContextAsync();
-            return await context.Groups.Where(x => x.CourseId == courseId).ToListAsync();
+            return await context.Groups
+                .Include(x => x.Course)
+                .Include(x => x.Teacher)
+                .Where(x => x.CourseId == courseId).ToListAsync();
     }
 }

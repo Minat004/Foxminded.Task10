@@ -35,12 +35,10 @@
                 <DataGridTextColumn Width="*" 
                                     Header="Name" 
                                     Binding="{Binding Name}"/>
-                <!-- <DataGridTextColumn Width="*"  -->
-                <!--                     Header="Course"  -->
-                <!--                     Binding="{Binding CourseName}"/> -->
-                <!-- <DataGridTextColumn Width="*"  -->
-                <!--                     Header="Teacher"  -->
-                <!--                     Binding="{Binding TeacherFullName}"/> -->
+                <DataGridTextColumn Width="*"
+                                    Header="Group"
+                                    Binding="{Binding GroupName}"/>
+                
             </DataGrid.Columns>
             
         </DataGrid>

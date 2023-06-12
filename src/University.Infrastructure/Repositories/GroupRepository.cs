@@ -29,7 +29,9 @@ public class GroupRepository : IGroupRepository<Group>
     public async Task<IEnumerable<Student>> GetGroupStudentsAsync(int groupId)
     {
         await using var context = await _dbContextFactory.CreateDbContextAsync();
-        return await context.Students.Where(x => x.GroupId == groupId).ToListAsync();
+        return await context.Students
+            .Include(x => x.Group)
+            .Where(x => x.GroupId == groupId).ToListAsync();
     }
 
     public async Task<Teacher> GetTeacherOrDefaultAsync(int teacherId)
