@@ -23,9 +23,14 @@ public partial class CourseViewModel : UnitedEntityViewModel
         _courseService = courseService;
         _groupService = groupService;
         _course = course;
+
+        Description = course.Description!;
         
         LoadGroupsByCourseAsync().GetAwaiter();
     }
+
+    [ObservableProperty] 
+    private string description;
 
     [ObservableProperty]
     private ObservableCollection<GroupViewModel> groupsByCourseViews = new(new List<GroupViewModel>());

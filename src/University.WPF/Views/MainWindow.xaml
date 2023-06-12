@@ -13,6 +13,9 @@
         FontSize="18">
     
     <Window.Resources>
+        <DataTemplate DataType="{x:Type vm:HomeViewModel}">
+            <uc:HomeView/>
+        </DataTemplate>
         <DataTemplate DataType="{x:Type vm:CourseViewModel}">
             <uc:CoursesView/>
         </DataTemplate>
@@ -24,16 +27,28 @@
     <Grid ShowGridLines="True">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"></ColumnDefinition>
-            <ColumnDefinition Width="*"></ColumnDefinition>
+            <ColumnDefinition Width="2*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
         
-        <TreeView Grid.Row="0"
+        <!-- Header -->
+        
+        <Border Grid.Row="0"
+                Grid.Column="0"
+                Grid.ColumnSpan="2">
+            <TextBlock Text="University"
+                       Margin="5"
+                       HorizontalAlignment="Center"/>
+        </Border>
+        
+        <TreeView Grid.Row="1"
                   Grid.Column="0"
-                  ItemsSource="{Binding CourseViewModels}">
+                  Grid.RowSpan="2"
+                  ItemsSource="{Binding HomeViewModels}">
             
             <b:Interaction.Triggers>
                 <b:EventTrigger EventName="SelectedItemChanged">
@@ -50,40 +65,23 @@
             </TreeView.ItemContainerStyle>
             
             <TreeView.ItemTemplate>
-                <HierarchicalDataTemplate ItemsSource="{Binding GroupsByCourseViews}">
-                <TextBlock Text="{Binding Name}"/>
+                <HierarchicalDataTemplate ItemsSource="{Binding CourseViewModels}">
+                    <TextBlock Text="{Binding Name}"/>
+                    <HierarchicalDataTemplate.ItemTemplate>
+                        <HierarchicalDataTemplate ItemsSource="{Binding GroupsByCourseViews}" 
+                                                  DataType="{x:Type vm:CourseViewModel}">
+                            <TextBlock Text="{Binding Name}"/>
+                        </HierarchicalDataTemplate>  
+                    </HierarchicalDataTemplate.ItemTemplate>
                 </HierarchicalDataTemplate>
             </TreeView.ItemTemplate>
 
         </TreeView>
         
-        <TextBlock Grid.Row="1" 
-                   Grid.Column="0"
-                   Text="{Binding SelectedItem.Name}"/>
-        
         <ContentControl Grid.Row="1"
                         Grid.Column="1"
+                        Grid.RowSpan="2"
                         Content="{Binding SelectedItem}"/>
         
-        <DataGrid Grid.Row="0"
-                  Grid.Column="1"
-                  ItemsSource="{Binding CoursesView}"
-                  AutoGenerateColumns="False"
-                  CanUserAddRows="False"
-                  CanUserDeleteRows="False">
-            
-            <DataGrid.Columns>
-                <DataGridTextColumn Width="Auto" 
-                                    Header="Id" 
-                                    Binding="{Binding Id}"/>
-                <DataGridTextColumn Width="*" 
-                                    Header="Course" 
-                                    Binding="{Binding Name}"/>
-                <DataGridTextColumn Width="*" 
-                                    Header="Description" 
-                                    Binding="{Binding Description}"/>
-            </DataGrid.Columns>
-            
-        </DataGrid>
     </Grid>
 </Window>
