@@ -2,5 +2,5 @@
 
 public interface IDialogService
 {
-    public object? ShowDialog(object view, object viewModel, IDialogConfiguration? configuration);
+    public object? ShowDialog(object view, object viewModel, IDialogConfiguration? configuration, object data = null!);
 }

@@ -23,6 +23,7 @@
         <TextBlock Grid.Row="0" Text="{Binding Name}"/>
         
         <DataGrid Grid.Row="1"
+                  SelectedItem="{Binding SelectedGroupViewModel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                   ItemsSource="{Binding GroupsByCourseViews, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                   AutoGenerateColumns="False"
                   CanUserAddRows="False"
@@ -58,6 +59,7 @@
                 <Button Content="Edit" 
                         Width="Auto"
                         Margin="5"
+                        Command="{Binding OpenEditGroupWindowCommand}"
                         Padding="2"/>
                 <Button Content="Delete" 
                         Width="Auto"

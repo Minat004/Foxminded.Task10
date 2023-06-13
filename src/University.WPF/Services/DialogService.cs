@@ -5,7 +5,7 @@ namespace University.WPF.Services;
 
 public class DialogService: IDialogService
 {
-    public object? ShowDialog(object view, object viewModel, IDialogConfiguration? configuration = null)
+    public object? ShowDialog(object view, object viewModel, IDialogConfiguration? configuration, object data)
     {
         var window = new Window
         {
@@ -16,6 +16,11 @@ public class DialogService: IDialogService
             Content = view,
             DataContext = viewModel
         };
+
+        if (viewModel is IDataHolder dataHolder)
+        {
+            dataHolder.Data = data;
+        }
 
         if (viewModel is IClosable closable)
         {
