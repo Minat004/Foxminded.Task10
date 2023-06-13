@@ -9,12 +9,16 @@ namespace University.WPF.Views;
 
 public partial class MainWindow
 {
+    private readonly IDialogService _dialogService;
+
     public MainWindow(
-        IWindowService windowService,
         ICourseService<Course> courseService,
-        IGroupService<Group> groupService)
+        IGroupService<Group> groupService,
+        ITeacherService<Teacher> teacherService,
+        IDialogService dialogService)
     {
-        DataContext = new MainWindowViewModel(windowService, courseService, groupService);
+        _dialogService = dialogService;
+        DataContext = new MainWindowViewModel(courseService, groupService, teacherService, dialogService);
         InitializeComponent();
     }
 

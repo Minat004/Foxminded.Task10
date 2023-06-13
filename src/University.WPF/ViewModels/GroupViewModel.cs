@@ -36,7 +36,7 @@ public partial class GroupViewModel : UnitedEntityViewModel
     private async Task LoadGroupsByCourseAsync()
     {
         var students = await _groupService.GetGroupStudentsAsync(_group.Id);
-        var viewModels = students.Select(student => new StudentViewModel(student)).ToList();
+        var viewModels = students.Select(student => new StudentViewModel(student));
 
         StudentsByGroupViews = new ObservableCollection<StudentViewModel>(viewModels);
     }

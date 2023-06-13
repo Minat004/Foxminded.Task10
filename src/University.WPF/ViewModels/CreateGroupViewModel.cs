@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -7,55 +8,65 @@ using University.Core.Models;
 
 namespace University.WPF.ViewModels;
 
-public partial class CreateGroupViewModel : ObservableObject
+public partial class CreateGroupViewModel : ObservableObject, IResultHolder, IClosable
 {
-    private readonly IGroupService<Group> _groupService;
     private readonly ICourseService<Course> _courseService;
+    private readonly IGroupService<Group> _groupService;
     private readonly ITeacherService<Teacher> _teacherService;
 
     public CreateGroupViewModel(
-        IGroupService<Group> groupService,
         ICourseService<Course> courseService,
+        IGroupService<Group> groupService,
         ITeacherService<Teacher> teacherService)
     {
-        _groupService = groupService;
         _courseService = courseService;
+        _groupService = groupService;
         _teacherService = teacherService;
 
         LoadCoursesAsync().GetAwaiter();
         LoadTeachersAsync().GetAwaiter();
     }
-    
+
+    public object? Result { get; private set; }
+
+    public Action? FinishInterAction { get; set; }
+
     [ObservableProperty]
     private string? groupName;
 
     [ObservableProperty] 
     private Course? selectedCourse;
-    
+
     [ObservableProperty] 
     private Teacher? selectedTeacher;
-    
+
     [ObservableProperty]
     private ObservableCollection<Course> courses = new();
-    
+
     [ObservableProperty]
     private ObservableCollection<Teacher> teachers = new();
 
     [RelayCommand]
-    private void CreateGroup(IWindowService windowService)
+    private void CreateGroup()
     {
         var group = new Group
         {
             Name = GroupName!,
             CourseId = SelectedCourse!.Id,
-            TeacherId = SelectedTeacher!.Id
+            TeacherId = SelectedTeacher!.Id,
         };
 
         _groupService.AddAsync(group);
-        
-        windowService.CloseWindow();
+
+        FinishInterAction!();
     }
-    
+
+    [RelayCommand]
+    private void Cancel()
+    {
+        FinishInterAction!();
+    }
+
     private async Task LoadCoursesAsync()
     {
         var enumerableCourses = await _courseService.GetAllAsync();

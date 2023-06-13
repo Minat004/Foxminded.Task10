@@ -9,7 +9,7 @@ using University.Core.Models;
 using University.Core.Services;
 using University.Infrastructure.Data;
 using University.Infrastructure.Repositories;
-using University.WPF.ViewModels;
+using University.WPF.Services;
 using University.WPF.Views;
 
 namespace University.WPF;
@@ -33,9 +33,8 @@ public partial class App
                     options.UseSqlServer(hostContext.Configuration.GetConnectionString("UniversityConnection")));
 
                 services.AddSingleton<MainWindow>();
-                
-                services.AddTransient<IWindowService, CreateGroupWindow>();
 
+                services.AddScoped<IDialogService, DialogService>();
                 services.AddScoped<ICourseService<Course>, CourseService>();
                 services.AddScoped<ICourseRepository<Course>, CourseRepository>();
                 services.AddScoped<IGroupRepository<Group>, GroupRepository>();

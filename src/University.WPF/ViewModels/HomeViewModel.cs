@@ -10,19 +10,22 @@ namespace University.WPF.ViewModels;
 
 public partial class HomeViewModel : UnitedEntityViewModel
 {
-    private readonly IWindowService _windowService;
     private readonly ICourseService<Course> _courseService;
     private readonly IGroupService<Group> _groupService;
+    private readonly ITeacherService<Teacher> _teacherService;
+    private readonly IDialogService _dialogService;
 
     public HomeViewModel(
-        IWindowService windowService,
         ICourseService<Course> courseService,
         IGroupService<Group> groupService,
+        ITeacherService<Teacher> teacherService,
+        IDialogService dialogService,
         int id, string name) : base(id, name)
     {
-        _windowService = windowService;
         _courseService = courseService;
         _groupService = groupService;
+        _teacherService = teacherService;
+        _dialogService = dialogService;
 
         LoadCourseViewModelsAsync().GetAwaiter();
     }
@@ -34,7 +37,7 @@ public partial class HomeViewModel : UnitedEntityViewModel
     {
         var courses = await _courseService.GetAllAsync();
         var viewModels = courses.Select(course => 
-            new CourseViewModel(_windowService, _courseService, _groupService, course));
+            new CourseViewModel(_courseService, _groupService, _teacherService, _dialogService, course));
         
         CourseViewModels = new ObservableCollection<CourseViewModel>(viewModels);
     }

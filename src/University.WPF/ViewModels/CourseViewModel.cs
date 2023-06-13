@@ -6,26 +6,32 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using University.Core.Interfaces;
 using University.Core.Models;
+using University.WPF.Services;
 using University.WPF.Views;
 
 namespace University.WPF.ViewModels;
 
 public partial class CourseViewModel : UnitedEntityViewModel
 {
-    private readonly IWindowService _windowService;
     private readonly ICourseService<Course> _courseService;
     private readonly IGroupService<Group> _groupService;
+    private readonly ITeacherService<Teacher> _teacherService;
+    private readonly IDialogService _dialogService;
+
     private readonly Course _course;
 
     public CourseViewModel(
-        IWindowService windowService,
         ICourseService<Course> courseService,
         IGroupService<Group> groupService,
-        Course course) : base(course.Id, course.Name)
+        ITeacherService<Teacher> teacherService,
+        IDialogService dialogService,
+        Course course
+        ) : base(course.Id, course.Name)
     {
-        _windowService = windowService;
         _courseService = courseService;
         _groupService = groupService;
+        _teacherService = teacherService;
+        _dialogService = dialogService;
         _course = course;
 
         Description = course.Description!;
@@ -42,10 +48,22 @@ public partial class CourseViewModel : UnitedEntityViewModel
     [RelayCommand]
     private void OpenCreateGroupWindow()
     {
-        _windowService.ShowWindow();
+        IDialogConfiguration dialogConfiguration = new DialogConfiguration()
+        {
+            Title = "Edit Group",
+            Height = 250,
+            Width = 400
+        };
+        
+        var group = (GroupViewModel) _dialogService.ShowDialog(
+            new CreateGroupView(), 
+            new CreateGroupViewModel(_courseService, _groupService, _teacherService),
+            dialogConfiguration)!;
+
+        LoadGroupsByCourseAsync().GetAwaiter();
     }
-    
-    public async Task LoadGroupsByCourseAsync()
+
+    private async Task LoadGroupsByCourseAsync()
     {
         var groups = await _courseService.GetCourseGroupsAsync(_course.Id);
         var viewModels = groups.Select(group => new GroupViewModel(_groupService, group)).ToList();

@@ -10,11 +10,13 @@ namespace University.WPF.ViewModels;
 public partial class MainWindowViewModel : ObservableObject
 {
     public MainWindowViewModel(
-        IWindowService windowService,
         ICourseService<Course> courseService,
-        IGroupService<Group> groupService)
+        IGroupService<Group> groupService,
+        ITeacherService<Teacher> teacherService,
+        IDialogService dialogService)
     {
-        HomeViewModels.Add(new HomeViewModel(windowService, courseService, groupService, 0, "Course"));
+        HomeViewModels.Add(
+            new HomeViewModel(courseService, groupService, teacherService, dialogService, 0, "Course"));
 
         SelectedItem = HomeViewModels[0];
     }
