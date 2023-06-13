@@ -40,4 +40,9 @@ public partial class GroupViewModel : UnitedEntityViewModel
 
         StudentsByGroupViews = new ObservableCollection<StudentViewModel>(viewModels);
     }
+
+    public Group GetGroup()
+    {
+        return _group;
+    }
 }

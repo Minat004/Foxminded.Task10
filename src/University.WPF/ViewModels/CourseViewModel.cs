@@ -43,6 +43,9 @@ public partial class CourseViewModel : UnitedEntityViewModel
     private string description;
 
     [ObservableProperty]
+    private GroupViewModel? selectedGroupViewModel;
+
+    [ObservableProperty]
     private ObservableCollection<GroupViewModel> groupsByCourseViews = new(new List<GroupViewModel>());
 
     [RelayCommand]
@@ -50,7 +53,7 @@ public partial class CourseViewModel : UnitedEntityViewModel
     {
         IDialogConfiguration dialogConfiguration = new DialogConfiguration()
         {
-            Title = "Edit Group",
+            Title = "Add Group",
             Height = 250,
             Width = 400
         };
@@ -61,6 +64,31 @@ public partial class CourseViewModel : UnitedEntityViewModel
             dialogConfiguration)!;
 
         LoadGroupsByCourseAsync().GetAwaiter();
+    }
+    
+    
+    [RelayCommand]
+    private void OpenEditGroupWindow()
+    {
+        IDialogConfiguration dialogConfiguration = new DialogConfiguration()
+        {
+            Title = "Edit Group",
+            Height = 250,
+            Width = 400
+        };
+        
+        var group = (GroupViewModel) _dialogService.ShowDialog(
+            new EditGroupView(), 
+            new EditGroupViewModel(_groupService),
+            dialogConfiguration, SelectedGroupViewModel!)!;
+        
+        LoadGroupsByCourseAsync().GetAwaiter();
+    }
+
+    [RelayCommand]
+    private void DeleteGroup()
+    {
+        
     }
 
     private async Task LoadGroupsByCourseAsync()
