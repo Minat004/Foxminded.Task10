@@ -68,7 +68,7 @@
                 <HierarchicalDataTemplate ItemsSource="{Binding CourseViewModels}">
                     <TextBlock Text="{Binding Name}"/>
                     <HierarchicalDataTemplate.ItemTemplate>
-                        <HierarchicalDataTemplate ItemsSource="{Binding GroupsByCourseViews}" 
+                        <HierarchicalDataTemplate ItemsSource="{Binding GroupsByCourseViews, UpdateSourceTrigger=PropertyChanged}" 
                                                   DataType="{x:Type vm:CourseViewModel}">
                             <TextBlock Text="{Binding Name}"/>
                         </HierarchicalDataTemplate>  

@@ -10,10 +10,11 @@ namespace University.WPF.ViewModels;
 public partial class MainWindowViewModel : ObservableObject
 {
     public MainWindowViewModel(
+        IWindowService windowService,
         ICourseService<Course> courseService,
         IGroupService<Group> groupService)
     {
-        HomeViewModels.Add(new HomeViewModel(courseService, groupService, 0, "Course"));
+        HomeViewModels.Add(new HomeViewModel(windowService, courseService, groupService, 0, "Course"));
 
         SelectedItem = HomeViewModels[0];
     }
@@ -26,11 +27,6 @@ public partial class MainWindowViewModel : ObservableObject
 
     [RelayCommand]
     private void SetSelectedItem()
-    {
-        SetSelectedItemOrDefault();
-    }
-
-    private void SetSelectedItemOrDefault()
     {
         foreach (var courseViewModel in HomeViewModels[0].CourseViewModels)
         {

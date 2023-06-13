@@ -3,23 +3,27 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using University.Core.Interfaces;
 using University.Core.Models;
-using University.WPF.GenericCollections;
+using University.WPF.Views;
 
 namespace University.WPF.ViewModels;
 
 public partial class CourseViewModel : UnitedEntityViewModel
 {
+    private readonly IWindowService _windowService;
     private readonly ICourseService<Course> _courseService;
     private readonly IGroupService<Group> _groupService;
     private readonly Course _course;
 
     public CourseViewModel(
+        IWindowService windowService,
         ICourseService<Course> courseService,
         IGroupService<Group> groupService,
         Course course) : base(course.Id, course.Name)
     {
+        _windowService = windowService;
         _courseService = courseService;
         _groupService = groupService;
         _course = course;
@@ -34,8 +38,14 @@ public partial class CourseViewModel : UnitedEntityViewModel
 
     [ObservableProperty]
     private ObservableCollection<GroupViewModel> groupsByCourseViews = new(new List<GroupViewModel>());
+
+    [RelayCommand]
+    private void OpenCreateGroupWindow()
+    {
+        _windowService.ShowWindow();
+    }
     
-    private async Task LoadGroupsByCourseAsync()
+    public async Task LoadGroupsByCourseAsync()
     {
         var groups = await _courseService.GetCourseGroupsAsync(_course.Id);
         var viewModels = groups.Select(group => new GroupViewModel(_groupService, group)).ToList();

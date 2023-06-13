@@ -34,10 +34,14 @@ public partial class App
 
                 services.AddSingleton<MainWindow>();
                 
-                services.AddScoped<ICourseRepository<Course>, CourseRepository>();
+                services.AddTransient<IWindowService, CreateGroupWindow>();
+
                 services.AddScoped<ICourseService<Course>, CourseService>();
+                services.AddScoped<ICourseRepository<Course>, CourseRepository>();
                 services.AddScoped<IGroupRepository<Group>, GroupRepository>();
                 services.AddScoped<IGroupService<Group>, GroupService>();
+                services.AddScoped<ITeacherRepository<Teacher>, TeacherRepository>();
+                services.AddScoped<ITeacherService<Teacher>, TeacherService>();
             })
             .Build();
     }

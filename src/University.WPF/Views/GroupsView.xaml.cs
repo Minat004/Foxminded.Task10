@@ -1,8 +1,6 @@
-﻿using System.Windows.Controls;
+﻿namespace University.WPF.Views;
 
-namespace University.WPF.Views;
-
-public partial class GroupsView : UserControl
+public partial class GroupsView
 {
     public GroupsView()
     {

@@ -23,7 +23,7 @@
         <TextBlock Grid.Row="0" Text="{Binding Name}"/>
         
         <DataGrid Grid.Row="1"
-                  ItemsSource="{Binding GroupsByCourseViews}"
+                  ItemsSource="{Binding GroupsByCourseViews, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                   AutoGenerateColumns="False"
                   CanUserAddRows="False"
                   CanUserDeleteRows="False">
@@ -50,15 +50,28 @@
             <StackPanel Orientation="Horizontal"
                         HorizontalAlignment="Right">
 
-                <Button Content="Add" 
+                <Button Content="Create" 
                         Width="Auto"
                         Margin="5"
+                        Command="{Binding OpenCreateGroupWindowCommand}"
                         Padding="2"/>
                 <Button Content="Edit" 
                         Width="Auto"
                         Margin="5"
                         Padding="2"/>
                 <Button Content="Delete" 
+                        Width="Auto"
+                        Margin="5"
+                        Padding="2"/>
+                <Button Content="Import" 
+                        Width="Auto"
+                        Margin="5"
+                        Padding="2"/>
+                <Button Content="Export" 
+                        Width="Auto"
+                        Margin="5"
+                        Padding="2"/>
+                <Button Content="Report" 
                         Width="Auto"
                         Margin="5"
                         Padding="2"/>
