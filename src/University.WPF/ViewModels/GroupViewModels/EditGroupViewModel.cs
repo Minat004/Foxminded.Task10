@@ -4,7 +4,7 @@ using CommunityToolkit.Mvvm.Input;
 using University.Core.Interfaces;
 using University.Core.Models;
 
-namespace University.WPF.ViewModels;
+namespace University.WPF.ViewModels.GroupViewModels;
 
 public partial class EditGroupViewModel : ObservableObject, IDataHolder, IResultHolder, IClosable
 {

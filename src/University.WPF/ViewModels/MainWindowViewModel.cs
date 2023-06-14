@@ -12,11 +12,12 @@ public partial class MainWindowViewModel : ObservableObject
     public MainWindowViewModel(
         ICourseService<Course> courseService,
         IGroupService<Group> groupService,
+        IStudentService<Student> studentService,
         ITeacherService<Teacher> teacherService,
         IDialogService dialogService)
     {
         HomeViewModels.Add(
-            new HomeViewModel(courseService, groupService, teacherService, dialogService, 0, "Course"));
+            new HomeViewModel(courseService, groupService, studentService, teacherService, dialogService, 0, "Course"));
 
         SelectedItem = HomeViewModels[0];
     }

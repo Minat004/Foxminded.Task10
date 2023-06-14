@@ -7,14 +7,16 @@ using CommunityToolkit.Mvvm.Input;
 using University.Core.Interfaces;
 using University.Core.Models;
 using University.WPF.Services;
+using University.WPF.ViewModels.GroupViewModels;
 using University.WPF.Views;
 
-namespace University.WPF.ViewModels;
+namespace University.WPF.ViewModels.CourseViewModels;
 
 public partial class CourseViewModel : UnitedEntityViewModel
 {
     private readonly ICourseService<Course> _courseService;
     private readonly IGroupService<Group> _groupService;
+    private readonly IStudentService<Student> _studentService;
     private readonly ITeacherService<Teacher> _teacherService;
     private readonly IDialogService _dialogService;
 
@@ -23,6 +25,7 @@ public partial class CourseViewModel : UnitedEntityViewModel
     public CourseViewModel(
         ICourseService<Course> courseService,
         IGroupService<Group> groupService,
+        IStudentService<Student> studentService,
         ITeacherService<Teacher> teacherService,
         IDialogService dialogService,
         Course course
@@ -30,6 +33,7 @@ public partial class CourseViewModel : UnitedEntityViewModel
     {
         _courseService = courseService;
         _groupService = groupService;
+        _studentService = studentService;
         _teacherService = teacherService;
         _dialogService = dialogService;
         _course = course;
@@ -38,11 +42,13 @@ public partial class CourseViewModel : UnitedEntityViewModel
         
         LoadGroupsByCourseAsync().GetAwaiter();
     }
-
+    
     [ObservableProperty] 
     private string description;
 
     [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(OpenEditGroupWindowCommand))]
+    [NotifyCanExecuteChangedFor(nameof(DeleteGroupCommand))]
     private GroupViewModel? selectedGroupViewModel;
 
     [ObservableProperty]
@@ -67,8 +73,8 @@ public partial class CourseViewModel : UnitedEntityViewModel
     }
     
     
-    [RelayCommand]
-    private void OpenEditGroupWindow()
+    [RelayCommand(CanExecute = nameof(CanOpenEditGroupWindowOrDeleteGroup))]
+    private void OpenEditGroupWindow(GroupViewModel groupViewModel)
     {
         IDialogConfiguration dialogConfiguration = new DialogConfiguration()
         {
@@ -80,21 +86,30 @@ public partial class CourseViewModel : UnitedEntityViewModel
         var group = (GroupViewModel) _dialogService.ShowDialog(
             new EditGroupView(), 
             new EditGroupViewModel(_groupService),
-            dialogConfiguration, SelectedGroupViewModel!)!;
+            dialogConfiguration, groupViewModel)!;
         
         LoadGroupsByCourseAsync().GetAwaiter();
     }
 
-    [RelayCommand]
-    private void DeleteGroup()
+    [RelayCommand(CanExecute = nameof(CanOpenEditGroupWindowOrDeleteGroup))]
+    private void DeleteGroup(GroupViewModel groupViewModel)
     {
+        _groupService.DeleteAsync(groupViewModel.GetGroup());
         
+        LoadGroupsByCourseAsync().GetAwaiter();
+    }
+
+    private bool CanOpenEditGroupWindowOrDeleteGroup(GroupViewModel? groupViewModel)
+    { 
+        return groupViewModel is not null && groupViewModel.CourseId == Id;
     }
 
     private async Task LoadGroupsByCourseAsync()
     {
         var groups = await _courseService.GetCourseGroupsAsync(_course.Id);
-        var viewModels = groups.Select(group => new GroupViewModel(_groupService, group)).ToList();
+        
+        var viewModels = groups.Select(group => new GroupViewModel(
+            _groupService, _studentService, _dialogService, group)).ToList();
 
         GroupsByCourseViews = new ObservableCollection<GroupViewModel>(viewModels);
     }

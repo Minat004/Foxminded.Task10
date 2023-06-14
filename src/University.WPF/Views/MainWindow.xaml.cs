@@ -14,11 +14,12 @@ public partial class MainWindow
     public MainWindow(
         ICourseService<Course> courseService,
         IGroupService<Group> groupService,
+        IStudentService<Student> studentService,
         ITeacherService<Teacher> teacherService,
         IDialogService dialogService)
     {
         _dialogService = dialogService;
-        DataContext = new MainWindowViewModel(courseService, groupService, teacherService, dialogService);
+        DataContext = new MainWindowViewModel(courseService, groupService, studentService, teacherService, dialogService);
         InitializeComponent();
     }
 

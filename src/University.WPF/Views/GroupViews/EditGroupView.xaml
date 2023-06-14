@@ -1,14 +1,14 @@
-﻿<UserControl x:Class="University.WPF.Views.CreateGroupView"
+﻿<UserControl x:Class="University.WPF.Views.EditGroupView"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:local="clr-namespace:University.WPF.Views"
         xmlns:vm="clr-namespace:University.WPF.ViewModels"
+        xmlns:groupViewModels="clr-namespace:University.WPF.ViewModels.GroupViewModels"
         mc:Ignorable="d"
         FontSize="18"
         d:DesignHeight="250" d:DesignWidth="400"
-        d:DataContext="{d:DesignInstance Type=vm:CreateGroupViewModel}">
+        d:DataContext="{d:DesignInstance Type=groupViewModels:EditGroupViewModel}">
     
     <Grid ShowGridLines="True">
         
@@ -21,44 +21,52 @@
             <RowDefinition Height="Auto"></RowDefinition>
             <RowDefinition Height="Auto"></RowDefinition>
             <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
         
-        <!-- Name -->
+        <!-- Id -->
         <TextBlock Grid.Row="0"
                    Grid.Column="0"
-                   Text="Name"/>
+                   Text="Id"/>
         <TextBox Grid.Row="0"
                  Grid.Column="1"
-                 Text="{Binding GroupName}"/>
+                 IsEnabled="False"
+                 Text="{Binding CurrentGroup.Id}"/>
         
-        <!-- Course -->
+        <!-- Name -->
         <TextBlock Grid.Row="1"
                    Grid.Column="0"
-                   Text="Course"/>
-        <ComboBox Grid.Row="1"
-                  Grid.Column="1"
-                  SelectedItem="{Binding SelectedCourse}"
-                  ItemsSource="{Binding Courses}"
-                  DisplayMemberPath="Name"/>
+                   Text="Name"/>
+        <TextBox Grid.Row="1"
+                 Grid.Column="1"
+                 Text="{Binding CurrentGroup.Name}"/>
         
-        <!-- Teacher -->
+        <!-- Course -->
         <TextBlock Grid.Row="2"
                    Grid.Column="0"
-                   Text="Teacher"/>
-        <ComboBox Grid.Row="2"
-                  Grid.Column="1"
-                  SelectedItem="{Binding SelectedTeacher}"
-                  ItemsSource="{Binding Teachers}"
-                  DisplayMemberPath="FirstName"/>
+                   Text="Course"/>
+        <TextBox Grid.Row="2"
+                 Grid.Column="1"
+                 IsEnabled="False"
+                 Text="{Binding CurrentGroup.Course.Name}"/>
         
-        <StackPanel Grid.Row="3"
+        <!-- Teacher -->
+        <TextBlock Grid.Row="3"
+                   Grid.Column="0"
+                   Text="Teacher"/>
+        <TextBox Grid.Row="3"
+                 Grid.Column="1"
+                 IsEnabled="False"
+                 Text="{Binding TeacherFullName}"/>
+        
+        <StackPanel Grid.Row="4"
                     Grid.Column="0"
                     Grid.ColumnSpan="2"
                     Orientation="Horizontal">
             
-            <Button Content="Create"
-                    Command="{Binding CreateGroupCommand}"/>
+            <Button Content="Edit"
+                    Command="{Binding EditGroupCommand}"/>
             <Button Content="Cancel"
                     Command="{Binding CancelCommand}"/>
             

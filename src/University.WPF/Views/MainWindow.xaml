@@ -7,6 +7,8 @@
         xmlns:vm="clr-namespace:University.WPF.ViewModels"
         xmlns:uc="clr-namespace:University.WPF.Views"
         xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+        xmlns:courseViewModels="clr-namespace:University.WPF.ViewModels.CourseViewModels"
+        xmlns:groupViewModels="clr-namespace:University.WPF.ViewModels.GroupViewModels"
         mc:Ignorable="d"
         Title="University" Height="450" Width="800"
         d:DataContext="{d:DesignInstance Type=vm:MainWindowViewModel}"
@@ -16,11 +18,11 @@
         <DataTemplate DataType="{x:Type vm:HomeViewModel}">
             <uc:HomeView/>
         </DataTemplate>
-        <DataTemplate DataType="{x:Type vm:CourseViewModel}">
-            <uc:CoursesView/>
+        <DataTemplate DataType="{x:Type courseViewModels:CourseViewModel}">
+            <uc:CourseView/>
         </DataTemplate>
-        <DataTemplate DataType="{x:Type vm:GroupViewModel}">
-            <uc:GroupsView/>
+        <DataTemplate DataType="{x:Type groupViewModels:GroupViewModel}">
+            <uc:GroupView/>
         </DataTemplate>
     </Window.Resources>
     
@@ -69,7 +71,7 @@
                     <TextBlock Text="{Binding Name}"/>
                     <HierarchicalDataTemplate.ItemTemplate>
                         <HierarchicalDataTemplate ItemsSource="{Binding GroupsByCourseViews, UpdateSourceTrigger=PropertyChanged}" 
-                                                  DataType="{x:Type vm:CourseViewModel}">
+                                                  DataType="{x:Type courseViewModels:CourseViewModel}">
                             <TextBlock Text="{Binding Name}"/>
                         </HierarchicalDataTemplate>  
                     </HierarchicalDataTemplate.ItemTemplate>

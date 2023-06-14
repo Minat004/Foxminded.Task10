@@ -39,6 +39,8 @@ public partial class App
                 services.AddScoped<ICourseRepository<Course>, CourseRepository>();
                 services.AddScoped<IGroupRepository<Group>, GroupRepository>();
                 services.AddScoped<IGroupService<Group>, GroupService>();
+                services.AddScoped<IStudentRepository<Student>, StudentRepository>();
+                services.AddScoped<IStudentService<Student>, StudentService>();
                 services.AddScoped<ITeacherRepository<Teacher>, TeacherRepository>();
                 services.AddScoped<ITeacherService<Teacher>, TeacherService>();
             })
