@@ -10,6 +10,7 @@ using University.Core.Models;
 using University.WPF.Services;
 using University.WPF.ViewModels.GroupViewModels;
 using University.WPF.Views;
+using University.WPF.Views.GroupViews;
 
 namespace University.WPF.ViewModels.CourseViewModels;
 
@@ -21,6 +22,7 @@ public partial class CourseViewModel : UnitedEntityViewModel
     private readonly ITeacherService<Teacher> _teacherService;
     private readonly IDialogService _dialogService;
     private readonly ICsvService _csvService;
+    private readonly IPdfService _pdfService;
     private readonly IConfiguration _configuration;
 
     private readonly Course _course;
@@ -32,6 +34,7 @@ public partial class CourseViewModel : UnitedEntityViewModel
         ITeacherService<Teacher> teacherService,
         IDialogService dialogService,
         ICsvService csvService,
+        IPdfService pdfService,
         IConfiguration configuration,
         Course course
         ) : base(course.Id, course.Name)
@@ -42,6 +45,7 @@ public partial class CourseViewModel : UnitedEntityViewModel
         _teacherService = teacherService;
         _dialogService = dialogService;
         _csvService = csvService;
+        _pdfService = pdfService;
         _configuration = configuration;
         _course = course;
 
@@ -109,6 +113,12 @@ public partial class CourseViewModel : UnitedEntityViewModel
         _groupService.DeleteAsync(groupViewModel.GetGroup());
         
         LoadGroupsByCourseAsync().GetAwaiter();
+    }
+
+    [RelayCommand]
+    private void SaveReport()
+    {
+        _pdfService.SaveReport();
     }
 
     private bool CanOpenEditGroupWindowOrDeleteGroup(GroupViewModel? groupViewModel)

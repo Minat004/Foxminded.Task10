@@ -1,6 +1,6 @@
 ﻿using System.Windows.Controls;
 
-namespace University.WPF.Views;
+namespace University.WPF.Views.StudentViews;
 
 public partial class EditStudentView : UserControl
 {

@@ -44,6 +44,7 @@ public partial class App
                 services.AddScoped<ITeacherRepository<Teacher>, TeacherRepository>();
                 services.AddScoped<ITeacherService<Teacher>, TeacherService>();
                 services.AddScoped<ICsvService, CsvService>();
+                services.AddScoped<IPdfService, PdfService>();
             })
             .Build();
     }

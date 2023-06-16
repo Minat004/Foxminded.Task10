@@ -1,11 +1,4 @@
-﻿using System.ComponentModel;
-using System.Net;
-using System.Windows;
-using University.Core.Interfaces;
-using University.Core.Models;
-using University.WPF.ViewModels;
-
-namespace University.WPF.Views;
+﻿namespace University.WPF.Views.GroupViews;
 
 public partial class CreateGroupView
 {

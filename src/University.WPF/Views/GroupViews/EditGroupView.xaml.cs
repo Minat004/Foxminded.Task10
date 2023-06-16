@@ -1,7 +1,4 @@
-﻿using System.Windows;
-using University.Core.Interfaces;
-
-namespace University.WPF.Views;
+﻿namespace University.WPF.Views.GroupViews;
 
 public partial class EditGroupView
 {

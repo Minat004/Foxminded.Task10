@@ -9,6 +9,7 @@
         xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:cvm="clr-namespace:University.WPF.ViewModels.CourseViewModels"
         xmlns:gvm="clr-namespace:University.WPF.ViewModels.GroupViewModels"
+        xmlns:courseViews="clr-namespace:University.WPF.Views.CourseViews"
         mc:Ignorable="d"
         Title="University" Height="450" Width="800"
         d:DataContext="{d:DesignInstance Type=vm:MainWindowViewModel}"
@@ -19,7 +20,7 @@
             <uc:HomeView/>
         </DataTemplate>
         <DataTemplate DataType="{x:Type cvm:CourseViewModel}">
-            <uc:CourseView/>
+            <courseViews:CourseView/>
         </DataTemplate>
         <DataTemplate DataType="{x:Type gvm:GroupViewModel}">
             <uc:GroupView/>

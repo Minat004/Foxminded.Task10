@@ -11,6 +11,7 @@ using University.Core.Models.Mapping;
 using University.WPF.Services;
 using University.WPF.ViewModels.StudentViewModels;
 using University.WPF.Views;
+using University.WPF.Views.StudentViews;
 
 namespace University.WPF.ViewModels.GroupViewModels;
 

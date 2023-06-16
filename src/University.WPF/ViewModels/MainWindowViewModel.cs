@@ -17,12 +17,13 @@ public partial class MainWindowViewModel : ObservableObject
         IStudentService<Student> studentService,
         ITeacherService<Teacher> teacherService,
         IDialogService dialogService,
+        IPdfService pdfService,
         IConfiguration configuration,
         ICsvService csvService)
     {
         HomeViewModels.Add(
             new HomeViewModel(courseService, groupService, studentService, teacherService, 
-                dialogService, csvService, configuration, 0, "Course"));
+                dialogService, csvService, pdfService, configuration, 0, "Course"));
 
         SelectedItem = HomeViewModels[0];
     }

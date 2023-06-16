@@ -1,4 +1,4 @@
-﻿namespace University.WPF.Views;
+﻿namespace University.WPF.Views.CourseViews;
 
 public partial class CourseView
 {

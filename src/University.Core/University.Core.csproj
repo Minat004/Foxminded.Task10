@@ -14,13 +14,8 @@
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
-    </ItemGroup>
-
-    <ItemGroup>
-      <Reference Include="PresentationCore" />
-      <Reference Include="PresentationFramework">
-        <HintPath>C:\Program Files\dotnet\shared\Microsoft.WindowsDesktop.App\6.0.16\PresentationFramework.dll</HintPath>
-      </Reference>
+        <PackageReference Include="PDFsharp" Version="6.0.0-preview-2" />
+        <PackageReference Include="PDFsharp-MigraDoc" Version="6.0.0-preview-2" />
     </ItemGroup>
 
 </Project>

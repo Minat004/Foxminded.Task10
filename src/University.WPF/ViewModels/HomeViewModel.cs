@@ -18,6 +18,7 @@ public partial class HomeViewModel : UnitedEntityViewModel
     private readonly ITeacherService<Teacher> _teacherService;
     private readonly IDialogService _dialogService;
     private readonly ICsvService _csvService;
+    private readonly IPdfService _pdfService;
     private readonly IConfiguration _configuration;
 
     public HomeViewModel(
@@ -27,6 +28,7 @@ public partial class HomeViewModel : UnitedEntityViewModel
         ITeacherService<Teacher> teacherService,
         IDialogService dialogService,
         ICsvService csvService,
+        IPdfService pdfService,
         IConfiguration configuration,
         int id, string name) : base(id, name)
     {
@@ -36,6 +38,7 @@ public partial class HomeViewModel : UnitedEntityViewModel
         _teacherService = teacherService;
         _dialogService = dialogService;
         _csvService = csvService;
+        _pdfService = pdfService;
         _configuration = configuration;
 
         LoadCourseViewModelsAsync().GetAwaiter();
@@ -49,7 +52,7 @@ public partial class HomeViewModel : UnitedEntityViewModel
         var courses = await _courseService.GetAllAsync();
         var viewModels = courses.Select(course => 
             new CourseViewModel(_courseService, _groupService, _studentService, 
-                _teacherService, _dialogService, _csvService, _configuration, course));
+                _teacherService, _dialogService, _csvService, _pdfService, _configuration, course));
         
         CourseViewModels = new ObservableCollection<CourseViewModel>(viewModels);
     }
