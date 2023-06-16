@@ -76,14 +76,7 @@
                         CommandParameter="{Binding SelectedGroupViewModel}"
                         Padding="2"/>
                 
-                <Button Content="Import" 
-                        Width="Auto"
-                        Margin="5"
-                        Padding="2"/>
-                <Button Content="Export" 
-                        Width="Auto"
-                        Margin="5"
-                        Padding="2"/>
+                <!-- Report to PDF -->
                 <Button Content="Report" 
                         Width="Auto"
                         Margin="5"

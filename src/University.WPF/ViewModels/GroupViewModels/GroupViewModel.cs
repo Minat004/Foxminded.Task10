@@ -4,8 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.Extensions.Configuration;
 using University.Core.Interfaces;
 using University.Core.Models;
+using University.Core.Models.Mapping;
 using University.WPF.Services;
 using University.WPF.ViewModels.StudentViewModels;
 using University.WPF.Views;
@@ -17,17 +19,23 @@ public partial class GroupViewModel : UnitedEntityViewModel
     private readonly IGroupService<Group> _groupService;
     private readonly IStudentService<Student> _studentService;
     private readonly IDialogService _dialogService;
+    private readonly ICsvService _csvService;
+    private readonly IConfiguration _configuration;
     private readonly Group _group;
 
     public GroupViewModel(
         IGroupService<Group> groupService,
         IStudentService<Student> studentService,
         IDialogService dialogService,
+        ICsvService csvService,
+        IConfiguration configuration,
         Group group) : base(group.Id, group.Name)
     {
         _groupService = groupService;
         _studentService = studentService;
         _dialogService = dialogService;
+        _csvService = csvService;
+        _configuration = configuration;
         _group = group;
 
         CourseId = group.CourseId;
@@ -53,6 +61,8 @@ public partial class GroupViewModel : UnitedEntityViewModel
 
     [ObservableProperty]
     private ObservableCollection<StudentViewModel> studentsByGroupViews = new(new List<StudentViewModel>());
+
+    private List<Student> Students = new();
     
     [RelayCommand]
     private void OpenCreateStudentWindow()
@@ -99,21 +109,48 @@ public partial class GroupViewModel : UnitedEntityViewModel
         LoadStudentsByGroupAsync().GetAwaiter();
     }
 
-    private bool CanOpenEditStudentWindowOrDeleteStudent(StudentViewModel? studentViewModel)
+    [RelayCommand]
+    private void ImportStudents()
     {
-        return studentViewModel is not null;
+        var filePath = _configuration["CsvHelper:ImportFilePath"];
+        
+        _csvService.Save<Student, StudentMapCsvSave>(filePath!, Students);
     }
-    
+
+    [RelayCommand]
+    private void ExportStudents()
+    {
+        var filePath = _configuration["CsvHelper:ExportFilePath"];
+
+        var loadStudents = _csvService.Load<Student, StudentMapCsvLoad>(filePath!);
+
+        foreach (var student in loadStudents)
+        {
+            _studentService.AddAsync(student!);
+        }
+
+        LoadStudentsByGroupAsync().GetAwaiter();
+    }
 
     public Group GetGroup()
     {
         return _group;
     }
 
+    private bool CanOpenEditStudentWindowOrDeleteStudent(StudentViewModel? studentViewModel)
+    {
+        return studentViewModel is not null;
+    }
+
     private async Task LoadStudentsByGroupAsync()
     {
         var students = await _groupService.GetGroupStudentsAsync(_group.Id);
-        var viewModels = students.Select(student => new StudentViewModel(student));
+        var studentsList = new List<Student>(students);
+        
+        Students.Clear();
+        Students.AddRange(studentsList);
+        
+        var viewModels = studentsList.Select(student => new StudentViewModel(student));
 
         StudentsByGroupViews = new ObservableCollection<StudentViewModel>(viewModels);
     }

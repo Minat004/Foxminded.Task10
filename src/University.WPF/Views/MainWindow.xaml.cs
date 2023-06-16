@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Windows;
+using Microsoft.Extensions.Configuration;
 using University.Core.Interfaces;
 using University.Core.Models;
 using University.WPF.ViewModels;
@@ -16,10 +17,13 @@ public partial class MainWindow
         IGroupService<Group> groupService,
         IStudentService<Student> studentService,
         ITeacherService<Teacher> teacherService,
-        IDialogService dialogService)
+        IDialogService dialogService,
+        ICsvService csvService,
+        IConfiguration configuration)
     {
         _dialogService = dialogService;
-        DataContext = new MainWindowViewModel(courseService, groupService, studentService, teacherService, dialogService);
+        DataContext = new MainWindowViewModel(courseService, groupService, studentService, 
+            teacherService, dialogService, configuration, csvService);
         InitializeComponent();
     }
 

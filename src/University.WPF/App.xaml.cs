@@ -43,6 +43,7 @@ public partial class App
                 services.AddScoped<IStudentService<Student>, StudentService>();
                 services.AddScoped<ITeacherRepository<Teacher>, TeacherRepository>();
                 services.AddScoped<ITeacherService<Teacher>, TeacherService>();
+                services.AddScoped<ICsvService, CsvService>();
             })
             .Build();
     }

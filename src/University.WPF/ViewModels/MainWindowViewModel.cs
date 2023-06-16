@@ -2,6 +2,7 @@
 using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.Extensions.Configuration;
 using University.Core.Interfaces;
 using University.Core.Models;
 
@@ -9,15 +10,19 @@ namespace University.WPF.ViewModels;
 
 public partial class MainWindowViewModel : ObservableObject
 {
+
     public MainWindowViewModel(
         ICourseService<Course> courseService,
         IGroupService<Group> groupService,
         IStudentService<Student> studentService,
         ITeacherService<Teacher> teacherService,
-        IDialogService dialogService)
+        IDialogService dialogService,
+        IConfiguration configuration,
+        ICsvService csvService)
     {
         HomeViewModels.Add(
-            new HomeViewModel(courseService, groupService, studentService, teacherService, dialogService, 0, "Course"));
+            new HomeViewModel(courseService, groupService, studentService, teacherService, 
+                dialogService, csvService, configuration, 0, "Course"));
 
         SelectedItem = HomeViewModels[0];
     }

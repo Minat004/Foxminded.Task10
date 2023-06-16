@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
+using Microsoft.Extensions.Configuration;
 using University.Core.Interfaces;
 using University.Core.Models;
 using University.WPF.ViewModels.CourseViewModels;
@@ -16,6 +17,8 @@ public partial class HomeViewModel : UnitedEntityViewModel
     private readonly IStudentService<Student> _studentService;
     private readonly ITeacherService<Teacher> _teacherService;
     private readonly IDialogService _dialogService;
+    private readonly ICsvService _csvService;
+    private readonly IConfiguration _configuration;
 
     public HomeViewModel(
         ICourseService<Course> courseService,
@@ -23,6 +26,8 @@ public partial class HomeViewModel : UnitedEntityViewModel
         IStudentService<Student> studentService,
         ITeacherService<Teacher> teacherService,
         IDialogService dialogService,
+        ICsvService csvService,
+        IConfiguration configuration,
         int id, string name) : base(id, name)
     {
         _courseService = courseService;
@@ -30,6 +35,8 @@ public partial class HomeViewModel : UnitedEntityViewModel
         _studentService = studentService;
         _teacherService = teacherService;
         _dialogService = dialogService;
+        _csvService = csvService;
+        _configuration = configuration;
 
         LoadCourseViewModelsAsync().GetAwaiter();
     }
@@ -41,7 +48,8 @@ public partial class HomeViewModel : UnitedEntityViewModel
     {
         var courses = await _courseService.GetAllAsync();
         var viewModels = courses.Select(course => 
-            new CourseViewModel(_courseService, _groupService, _studentService, _teacherService, _dialogService, course));
+            new CourseViewModel(_courseService, _groupService, _studentService, 
+                _teacherService, _dialogService, _csvService, _configuration, course));
         
         CourseViewModels = new ObservableCollection<CourseViewModel>(viewModels);
     }

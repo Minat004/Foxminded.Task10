@@ -7,8 +7,8 @@
         xmlns:vm="clr-namespace:University.WPF.ViewModels"
         xmlns:uc="clr-namespace:University.WPF.Views"
         xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
-        xmlns:courseViewModels="clr-namespace:University.WPF.ViewModels.CourseViewModels"
-        xmlns:groupViewModels="clr-namespace:University.WPF.ViewModels.GroupViewModels"
+        xmlns:cvm="clr-namespace:University.WPF.ViewModels.CourseViewModels"
+        xmlns:gvm="clr-namespace:University.WPF.ViewModels.GroupViewModels"
         mc:Ignorable="d"
         Title="University" Height="450" Width="800"
         d:DataContext="{d:DesignInstance Type=vm:MainWindowViewModel}"
@@ -18,10 +18,10 @@
         <DataTemplate DataType="{x:Type vm:HomeViewModel}">
             <uc:HomeView/>
         </DataTemplate>
-        <DataTemplate DataType="{x:Type courseViewModels:CourseViewModel}">
+        <DataTemplate DataType="{x:Type cvm:CourseViewModel}">
             <uc:CourseView/>
         </DataTemplate>
-        <DataTemplate DataType="{x:Type groupViewModels:GroupViewModel}">
+        <DataTemplate DataType="{x:Type gvm:GroupViewModel}">
             <uc:GroupView/>
         </DataTemplate>
     </Window.Resources>
@@ -38,14 +38,30 @@
         </Grid.RowDefinitions>
         
         <!-- Header -->
-        
-        <Border Grid.Row="0"
-                Grid.Column="0"
-                Grid.ColumnSpan="2">
-            <TextBlock Text="University"
-                       Margin="5"
-                       HorizontalAlignment="Center"/>
-        </Border>
+        <StackPanel Grid.Row="0"
+                    Grid.Column="0"
+                    Grid.ColumnSpan="2"
+                    Orientation="Horizontal">
+            
+            <Border>
+                <TextBlock Text="University"
+                           Margin="5"
+                           HorizontalAlignment="Center"/>
+            </Border>
+            
+            <ListBox BorderThickness="0">
+                <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal"/>
+                    </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
+                <ListBoxItem>Courses</ListBoxItem>
+                <ListBoxItem>Groups</ListBoxItem>
+                <ListBoxItem>Students</ListBoxItem>
+                <ListBoxItem>Teachers</ListBoxItem>
+            </ListBox>
+            
+        </StackPanel>
         
         <TreeView Grid.Row="1"
                   Grid.Column="0"
@@ -71,7 +87,7 @@
                     <TextBlock Text="{Binding Name}"/>
                     <HierarchicalDataTemplate.ItemTemplate>
                         <HierarchicalDataTemplate ItemsSource="{Binding GroupsByCourseViews, UpdateSourceTrigger=PropertyChanged}" 
-                                                  DataType="{x:Type courseViewModels:CourseViewModel}">
+                                                  DataType="{x:Type cvm:CourseViewModel}">
                             <TextBlock Text="{Binding Name}"/>
                         </HierarchicalDataTemplate>  
                     </HierarchicalDataTemplate.ItemTemplate>

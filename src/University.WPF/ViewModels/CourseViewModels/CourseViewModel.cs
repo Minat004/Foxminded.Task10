@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.Extensions.Configuration;
 using University.Core.Interfaces;
 using University.Core.Models;
 using University.WPF.Services;
@@ -19,6 +20,8 @@ public partial class CourseViewModel : UnitedEntityViewModel
     private readonly IStudentService<Student> _studentService;
     private readonly ITeacherService<Teacher> _teacherService;
     private readonly IDialogService _dialogService;
+    private readonly ICsvService _csvService;
+    private readonly IConfiguration _configuration;
 
     private readonly Course _course;
 
@@ -28,6 +31,8 @@ public partial class CourseViewModel : UnitedEntityViewModel
         IStudentService<Student> studentService,
         ITeacherService<Teacher> teacherService,
         IDialogService dialogService,
+        ICsvService csvService,
+        IConfiguration configuration,
         Course course
         ) : base(course.Id, course.Name)
     {
@@ -36,6 +41,8 @@ public partial class CourseViewModel : UnitedEntityViewModel
         _studentService = studentService;
         _teacherService = teacherService;
         _dialogService = dialogService;
+        _csvService = csvService;
+        _configuration = configuration;
         _course = course;
 
         Description = course.Description!;
@@ -94,6 +101,11 @@ public partial class CourseViewModel : UnitedEntityViewModel
     [RelayCommand(CanExecute = nameof(CanOpenEditGroupWindowOrDeleteGroup))]
     private void DeleteGroup(GroupViewModel groupViewModel)
     {
+        if (groupViewModel.GetGroup().Students.Count == 0)
+        {
+            return;
+        }
+        
         _groupService.DeleteAsync(groupViewModel.GetGroup());
         
         LoadGroupsByCourseAsync().GetAwaiter();
@@ -109,7 +121,7 @@ public partial class CourseViewModel : UnitedEntityViewModel
         var groups = await _courseService.GetCourseGroupsAsync(_course.Id);
         
         var viewModels = groups.Select(group => new GroupViewModel(
-            _groupService, _studentService, _dialogService, group)).ToList();
+            _groupService, _studentService, _dialogService, _csvService, _configuration, group)).ToList();
 
         GroupsByCourseViews = new ObservableCollection<GroupViewModel>(viewModels);
     }
