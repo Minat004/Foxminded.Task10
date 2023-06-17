@@ -1,6 +1,8 @@
-﻿namespace University.Core.Interfaces;
+﻿using University.Core.Models;
+
+namespace University.Core.Interfaces;
 
 public interface IPdfService
 {
-    void SaveReport();
+    void SaveReport(Group group);
 }

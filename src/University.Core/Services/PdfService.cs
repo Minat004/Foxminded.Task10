@@ -1,18 +1,16 @@
 ﻿using MigraDoc.DocumentObjectModel;
-using MigraDoc.DocumentObjectModel.Shapes;
 using MigraDoc.DocumentObjectModel.Tables;
 using MigraDoc.Rendering;
-using PdfSharp.Drawing;
 using PdfSharp.Fonts;
-using PdfSharp.Pdf;
 using PdfSharp.Snippets.Font;
 using University.Core.Interfaces;
+using University.Core.Models;
 
 namespace University.Core.Services;
 
 public class PdfService : IPdfService
 {
-    public void SaveReport()
+    public void SaveReport(Group group)
     {
         GlobalFontSettings.FontResolver = new FailsafeFontResolver();
         
@@ -22,23 +20,23 @@ public class PdfService : IPdfService
             {
                 Title = "Course Report",
                 Subject = "Consist of course -> group -> students",
-                Author = "Stefan Lange"
+                Author = "Alex Bell"
             }
         };
 
         DefineStyles(document);
  
-        CreatePage(document);
- 
-        FillContent();
+        CreatePage(document, group);
 
         var pdfDocumentRenderer = new PdfDocumentRenderer
         {
             Document = document
         };
+
+        var fileName = $"{group.Course!.Name}_{group.Name}_{DateTime.Now:dd-MM-yyyyTHH-mm-ss}.pdf";
         
         pdfDocumentRenderer.RenderDocument();
-        pdfDocumentRenderer.PdfDocument.Save("test.pdf");
+        pdfDocumentRenderer.PdfDocument.Save(fileName);
     }
 
     private static void DefineStyles(Document document)
@@ -47,10 +45,15 @@ public class PdfService : IPdfService
         style.Font.Name = "Verdana";
  
         style = document.Styles[StyleNames.Header]!;
-        style.ParagraphFormat.AddTabStop("16cm", TabAlignment.Right);
+        style.ParagraphFormat.AddTabStop("2cm", TabAlignment.Left);
+        style.Font.Size = 18;
  
         style = document.Styles[StyleNames.Footer]!;
         style.ParagraphFormat.AddTabStop("8cm", TabAlignment.Center);
+
+        style = document.Styles.AddStyle("SubHeader", "Normal");
+        style.ParagraphFormat.TabStops.AddTabStop("8cm", TabAlignment.Left);
+        style.Font.Size = 16;
  
         style = document.Styles.AddStyle("Table", "Normal");
         style.Font.Name = "Verdana";
@@ -62,39 +65,27 @@ public class PdfService : IPdfService
         style.ParagraphFormat.TabStops.AddTabStop("16cm", TabAlignment.Right);
     }
 
-    private void CreatePage(Document document)
+    private static void CreatePage(Document document, Group group)
     {
         var section = document.AddSection();
         
-        var paragraph = section.Footers.Primary.AddParagraph();
-        paragraph.AddText("PowerBooks Inc · Sample Street 42 · 56789 Cologne · Germany");
-        paragraph.Format.Font.Size = 9;
-        paragraph.Format.Alignment = ParagraphAlignment.Center;
+        // Course
+        var paragraph = section.Headers.Primary.AddParagraph();
+        paragraph.AddText($"Course: {group.Course!.Name}");
         
-        var addressFrame = section.AddTextFrame();
-        addressFrame.Height = "3.0cm";
-        addressFrame.Width = "7.0cm";
-        addressFrame.Left = ShapePosition.Left;
-        addressFrame.RelativeHorizontal = RelativeHorizontal.Margin;
-        addressFrame.Top = "5.0cm";
-        addressFrame.RelativeVertical = RelativeVertical.Page;
-        
-        // Put sender in address frame
-        paragraph = addressFrame.AddParagraph("PowerBooks Inc · Sample Street 42 · 56789 Cologne");
-        paragraph.Format.Font.Name = "Times New Roman";
-        paragraph.Format.Font.Size = 7;
-        paragraph.Format.SpaceAfter = 3;
- 
-        // Add the print date field
+        // Group
         paragraph = section.AddParagraph();
-        paragraph.Format.SpaceBefore = "8cm";
-        paragraph.Style = "Reference";
-        paragraph.AddFormattedText("INVOICE", TextFormat.Bold);
-        paragraph.AddTab();
-        paragraph.AddText("Cologne, ");
-        paragraph.AddDateField("dd.MM.yyyy");
+        paragraph.Style = "SubHeader";
+        paragraph.Format.SpaceAfter = "0.5cm";
+        paragraph.AddText($"Group: {group.Name}");
+        
+        paragraph = section.Footers.Primary.AddParagraph();
+        paragraph.AddText("Created at: ");
+        paragraph.AddDateField("dddd, dd MMMM yyyy HH:mm:ss");
+        paragraph.Format.Font.Size = 10;
+        paragraph.Format.Alignment = ParagraphAlignment.Center;
  
-        // Create the item table
+        // Table
         var table = section.AddTable();
         table.Style = "Table";
         table.Borders.Color = Colors.Black;
@@ -103,46 +94,54 @@ public class PdfService : IPdfService
         table.Borders.Right.Width = 0.5;
         table.Rows.LeftIndent = 0;
         
-        // Before you can add a row, you must define the columns
-        var column = table.AddColumn("1cm");
+        // Add Columns
+        var column = table.AddColumn("3cm");
         column.Format.Alignment = ParagraphAlignment.Center;
  
-        column = table.AddColumn("2.5cm");
+        column = table.AddColumn("5cm");
         column.Format.Alignment = ParagraphAlignment.Right;
  
-        column = table.AddColumn("3cm");
-        column.Format.Alignment = ParagraphAlignment.Right;
- 
-        column = table.AddColumn("3.5cm");
-        column.Format.Alignment = ParagraphAlignment.Right;
- 
-        column = table.AddColumn("2cm");
-        column.Format.Alignment = ParagraphAlignment.Center;
- 
-        column = table.AddColumn("4cm");
+        column = table.AddColumn("5cm");
         column.Format.Alignment = ParagraphAlignment.Right;
         
-        // Create the header of the table
+        // Header
         var row = table.AddRow();
         row.HeadingFormat = true;
         row.Format.Alignment = ParagraphAlignment.Center;
         row.Format.Font.Bold = true;
-        row.Shading.Color = Colors.LightBlue;
+        row.Shading.Color = Colors.LightGray;
+        
         row.Cells[0].AddParagraph("Number");
-        row.Cells[0].Format.Font.Bold = true;
         row.Cells[0].Format.Alignment = ParagraphAlignment.Left;
         row.Cells[0].VerticalAlignment = VerticalAlignment.Bottom;
+        
         row.Cells[1].AddParagraph("First name");
         row.Cells[1].Format.Alignment = ParagraphAlignment.Left;
         row.Cells[1].VerticalAlignment = VerticalAlignment.Bottom;
+        
         row.Cells[2].AddParagraph("Last name");
         row.Cells[2].Format.Alignment = ParagraphAlignment.Left;
         row.Cells[2].VerticalAlignment = VerticalAlignment.Bottom;
  
         table.SetEdge(0, 0, 3, 1, Edge.Box, BorderStyle.Single, 0.75, Color.Empty);
+        
+        FillContent(table, group);
     }
 
-    private void FillContent()
+    private static void FillContent(Table table, Group group)
     {
+        var students = group.Students.ToList();
+        
+        for (var i = 0; i < students.Count; i++)
+        {
+            var row = table.AddRow();
+            row.Cells[0].Format.Alignment = ParagraphAlignment.Left;
+            row.Cells[1].Format.Alignment = ParagraphAlignment.Left;
+            row.Cells[2].Format.Alignment = ParagraphAlignment.Left;
+            
+            row.Cells[0].AddParagraph($"{i + 1}");
+            row.Cells[1].AddParagraph($"{students[i].FirstName}");
+            row.Cells[2].AddParagraph($"{students[i].LastName}");
+        }
     }
 }

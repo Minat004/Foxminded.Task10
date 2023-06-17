@@ -10,7 +10,6 @@ using University.Core.Models;
 using University.Core.Models.Mapping;
 using University.WPF.Services;
 using University.WPF.ViewModels.StudentViewModels;
-using University.WPF.Views;
 using University.WPF.Views.StudentViews;
 
 namespace University.WPF.ViewModels.GroupViewModels;
@@ -21,6 +20,7 @@ public partial class GroupViewModel : UnitedEntityViewModel
     private readonly IStudentService<Student> _studentService;
     private readonly IDialogService _dialogService;
     private readonly ICsvService _csvService;
+    private readonly IPdfService _pdfService;
     private readonly IConfiguration _configuration;
     private readonly Group _group;
 
@@ -29,6 +29,7 @@ public partial class GroupViewModel : UnitedEntityViewModel
         IStudentService<Student> studentService,
         IDialogService dialogService,
         ICsvService csvService,
+        IPdfService pdfService,
         IConfiguration configuration,
         Group group) : base(group.Id, group.Name)
     {
@@ -36,6 +37,7 @@ public partial class GroupViewModel : UnitedEntityViewModel
         _studentService = studentService;
         _dialogService = dialogService;
         _csvService = csvService;
+        _pdfService = pdfService;
         _configuration = configuration;
         _group = group;
 
@@ -131,6 +133,13 @@ public partial class GroupViewModel : UnitedEntityViewModel
         }
 
         LoadStudentsByGroupAsync().GetAwaiter();
+    }
+    
+    [RelayCommand]
+    private void SaveReport()
+    {
+        _group.Students = Students;
+        _pdfService.SaveReport(_group);
     }
 
     public Group GetGroup()

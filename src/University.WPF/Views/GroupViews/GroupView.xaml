@@ -87,6 +87,13 @@
                         Margin="5"
                         Command="{Binding ExportStudentsCommand}"
                         Padding="2"/>
+                
+                <!-- Report to PDF -->
+                <Button Content="Report" 
+                        Width="Auto"
+                        Margin="5"
+                        Command="{Binding SaveReportCommand}"
+                        Padding="2"/>
 
             </StackPanel>
         </Border>

@@ -115,12 +115,6 @@ public partial class CourseViewModel : UnitedEntityViewModel
         LoadGroupsByCourseAsync().GetAwaiter();
     }
 
-    [RelayCommand]
-    private void SaveReport()
-    {
-        _pdfService.SaveReport();
-    }
-
     private bool CanOpenEditGroupWindowOrDeleteGroup(GroupViewModel? groupViewModel)
     { 
         return groupViewModel is not null && groupViewModel.CourseId == Id;
@@ -131,7 +125,7 @@ public partial class CourseViewModel : UnitedEntityViewModel
         var groups = await _courseService.GetCourseGroupsAsync(_course.Id);
         
         var viewModels = groups.Select(group => new GroupViewModel(
-            _groupService, _studentService, _dialogService, _csvService, _configuration, group)).ToList();
+            _groupService, _studentService, _dialogService, _csvService, _pdfService, _configuration, group)).ToList();
 
         GroupsByCourseViews = new ObservableCollection<GroupViewModel>(viewModels);
     }
