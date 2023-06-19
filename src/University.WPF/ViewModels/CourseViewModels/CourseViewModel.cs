@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -9,7 +8,6 @@ using University.Core.Interfaces;
 using University.Core.Models;
 using University.WPF.Services;
 using University.WPF.ViewModels.GroupViewModels;
-using University.WPF.Views;
 using University.WPF.Views.GroupViews;
 
 namespace University.WPF.ViewModels.CourseViewModels;
@@ -50,8 +48,8 @@ public partial class CourseViewModel : UnitedEntityViewModel
         _course = course;
 
         Description = course.Description!;
-        
-        LoadGroupsByCourseAsync().GetAwaiter();
+
+        GroupsByCourseViews = new NotifyTask<ObservableCollection<GroupViewModel>>(GetGroupsByCourseAsync());
     }
     
     [ObservableProperty] 
@@ -62,8 +60,8 @@ public partial class CourseViewModel : UnitedEntityViewModel
     [NotifyCanExecuteChangedFor(nameof(DeleteGroupCommand))]
     private GroupViewModel? selectedGroupViewModel;
 
-    [ObservableProperty]
-    private ObservableCollection<GroupViewModel> groupsByCourseViews = new(new List<GroupViewModel>());
+    [ObservableProperty] 
+    private NotifyTask<ObservableCollection<GroupViewModel>> groupsByCourseViews;
 
     [RelayCommand]
     private void OpenCreateGroupWindow()
@@ -79,8 +77,8 @@ public partial class CourseViewModel : UnitedEntityViewModel
             new CreateGroupView(), 
             new CreateGroupViewModel(_courseService, _groupService, _teacherService),
             dialogConfiguration)!;
-
-        LoadGroupsByCourseAsync().GetAwaiter();
+        
+        GroupsByCourseViews = new NotifyTask<ObservableCollection<GroupViewModel>>(GetGroupsByCourseAsync());
     }
     
     
@@ -99,7 +97,7 @@ public partial class CourseViewModel : UnitedEntityViewModel
             new EditGroupViewModel(_groupService),
             dialogConfiguration, groupViewModel)!;
         
-        LoadGroupsByCourseAsync().GetAwaiter();
+        GroupsByCourseViews = new NotifyTask<ObservableCollection<GroupViewModel>>(GetGroupsByCourseAsync());
     }
 
     [RelayCommand(CanExecute = nameof(CanOpenEditGroupWindowOrDeleteGroup))]
@@ -112,21 +110,23 @@ public partial class CourseViewModel : UnitedEntityViewModel
         
         _groupService.DeleteAsync(groupViewModel.GetGroup());
         
-        LoadGroupsByCourseAsync().GetAwaiter();
+        GroupsByCourseViews = new NotifyTask<ObservableCollection<GroupViewModel>>(GetGroupsByCourseAsync());
     }
 
     private bool CanOpenEditGroupWindowOrDeleteGroup(GroupViewModel? groupViewModel)
     { 
         return groupViewModel is not null && groupViewModel.CourseId == Id;
     }
-
-    private async Task LoadGroupsByCourseAsync()
+    
+    private async Task<ObservableCollection<GroupViewModel>> GetGroupsByCourseAsync()
     {
-        var groups = await _courseService.GetCourseGroupsAsync(_course.Id);
+        var groups = await _courseService.GetCourseGroupsAsync(_course.Id).ConfigureAwait(false);
         
         var viewModels = groups.Select(group => new GroupViewModel(
-            _groupService, _studentService, _dialogService, _csvService, _pdfService, _configuration, group)).ToList();
+            _groupService, _studentService, _dialogService, _csvService, _pdfService, _configuration, group));
 
-        GroupsByCourseViews = new ObservableCollection<GroupViewModel>(viewModels);
+        var observeViewModels = new ObservableCollection<GroupViewModel>(viewModels);
+
+        return observeViewModels;
     }
 }
