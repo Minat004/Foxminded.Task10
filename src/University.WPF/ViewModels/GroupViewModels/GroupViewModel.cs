@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
+﻿using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -10,7 +8,7 @@ using University.Core.Models;
 using University.Core.Models.Mapping;
 using University.WPF.Services;
 using University.WPF.ViewModels.StudentViewModels;
-using University.WPF.Views.StudentViews;
+using University.WPF.Views.UserControls.StudentViews;
 
 namespace University.WPF.ViewModels.GroupViewModels;
 
@@ -22,7 +20,6 @@ public partial class GroupViewModel : UnitedEntityViewModel
     private readonly ICsvService _csvService;
     private readonly IPdfService _pdfService;
     private readonly IConfiguration _configuration;
-    private readonly Group _group;
 
     public GroupViewModel(
         IGroupService<Group> groupService,
@@ -31,7 +28,8 @@ public partial class GroupViewModel : UnitedEntityViewModel
         ICsvService csvService,
         IPdfService pdfService,
         IConfiguration configuration,
-        Group group) : base(group.Id, group.Name)
+        Group group) 
+        : base(group.Id, group.Name)
     {
         _groupService = groupService;
         _studentService = studentService;
@@ -39,36 +37,33 @@ public partial class GroupViewModel : UnitedEntityViewModel
         _csvService = csvService;
         _pdfService = pdfService;
         _configuration = configuration;
-        _group = group;
 
-        CourseId = group.CourseId;
-        CourseName = group.Course!.Name;
-        TeacherFullName = $"{group.Teacher!.FirstName} {group.Teacher.LastName}";
+        Group = group;
 
-        LoadStudentsByGroupAsync().GetAwaiter();
+        StudentsByGroup = new NotifyTask<ObservableCollection<Student>>(GetStudentsByGroupAsync());
+
+        Groups = new NotifyTask<ObservableCollection<Group>>(GetGroupsAsync());
     }
 
     [ObservableProperty] 
-    private int? courseId;
+    private Group group;
 
     [ObservableProperty] 
-    private string? courseName;
+    private NotifyTask<ObservableCollection<Student>> studentsByGroup;
 
     [ObservableProperty] 
-    private string teacherFullName;
+    private NotifyTask<ObservableCollection<Group>> groups;
 
     [ObservableProperty] 
-    [NotifyCanExecuteChangedFor(nameof(OpenEditStudentWindowCommand))]
+    private GroupViewModel? selectedItem;
+    
+    [ObservableProperty] 
+    [NotifyCanExecuteChangedFor(nameof(OpenStudentEditDialogCommand))]
     [NotifyCanExecuteChangedFor(nameof(DeleteStudentCommand))]
-    private StudentViewModel? selectedStudentViewModel;
-
-    [ObservableProperty]
-    private ObservableCollection<StudentViewModel> studentsByGroupViews = new(new List<StudentViewModel>());
-
-    private List<Student> Students = new();
+    private Student? selectedStudent;
     
     [RelayCommand]
-    private void OpenCreateStudentWindow()
+    private void OpenStudentAddDialog()
     {
         IDialogConfiguration dialogConfiguration = new DialogConfiguration()
         {
@@ -77,17 +72,19 @@ public partial class GroupViewModel : UnitedEntityViewModel
             Width = 400
         };
         
-        var student = (StudentViewModel) _dialogService.ShowDialog(
-            new CreateStudentView(), 
-            new CreateStudentViewModel(_groupService, _studentService),
+        var student = (Student) _dialogService.ShowDialog(
+            new StudentAddWindowView(), 
+            new StudentAddDialogViewModel(_groupService, _studentService),
             dialogConfiguration)!;
 
-        LoadStudentsByGroupAsync().GetAwaiter();
+        StudentsByGroup = new NotifyTask<ObservableCollection<Student>>(GetStudentsByGroupAsync());
+
+        Groups = new NotifyTask<ObservableCollection<Group>>(GetGroupsAsync());
     }
     
     
-    [RelayCommand(CanExecute = nameof(CanOpenEditStudentWindowOrDeleteStudent))]
-    private void OpenEditStudentWindow(StudentViewModel studentViewModel)
+    [RelayCommand(CanExecute = nameof(CanOpenStudentEditDialogOrDeleteStudent))]
+    private void OpenStudentEditDialog(Student oldStudent)
     {
         IDialogConfiguration dialogConfiguration = new DialogConfiguration()
         {
@@ -96,20 +93,24 @@ public partial class GroupViewModel : UnitedEntityViewModel
             Width = 400
         };
         
-        var student = (StudentViewModel) _dialogService.ShowDialog(
-            new EditStudentView(), 
-            new EditStudentViewModel(_studentService),
-            dialogConfiguration, studentViewModel)!;
+        var student = (Student) _dialogService.ShowDialog(
+            new StudentEditDialogView(), 
+            new StudentEditDialogViewModel(_studentService),
+            dialogConfiguration, oldStudent)!;
         
-        LoadStudentsByGroupAsync().GetAwaiter();
+        StudentsByGroup = new NotifyTask<ObservableCollection<Student>>(GetStudentsByGroupAsync());
+
+        Groups = new NotifyTask<ObservableCollection<Group>>(GetGroupsAsync());
     }
 
-    [RelayCommand(CanExecute = nameof(CanOpenEditStudentWindowOrDeleteStudent))]
-    private void DeleteStudent(StudentViewModel studentViewModel)
+    [RelayCommand(CanExecute = nameof(CanOpenStudentEditDialogOrDeleteStudent))]
+    private void DeleteStudent(Student oldStudent)
     {
-        _studentService.DeleteAsync(studentViewModel.GetStudent());
+        _studentService.DeleteAsync(oldStudent);
         
-        LoadStudentsByGroupAsync().GetAwaiter();
+        StudentsByGroup = new NotifyTask<ObservableCollection<Student>>(GetStudentsByGroupAsync());
+
+        Groups = new NotifyTask<ObservableCollection<Group>>(GetGroupsAsync());
     }
 
     [RelayCommand]
@@ -117,7 +118,7 @@ public partial class GroupViewModel : UnitedEntityViewModel
     {
         var filePath = _configuration["CsvHelper:ImportFilePath"];
         
-        _csvService.Save<Student, StudentMapCsvSave>(filePath!, Students);
+        _csvService.Save<Student, StudentMapCsvSave>(filePath!, Group.Students);
     }
 
     [RelayCommand]
@@ -132,36 +133,38 @@ public partial class GroupViewModel : UnitedEntityViewModel
             _studentService.AddAsync(student!);
         }
 
-        LoadStudentsByGroupAsync().GetAwaiter();
+        StudentsByGroup = new NotifyTask<ObservableCollection<Student>>(GetStudentsByGroupAsync());
+
+        Groups = new NotifyTask<ObservableCollection<Group>>(GetGroupsAsync());
     }
     
     [RelayCommand]
     private void SaveReport()
     {
-        _group.Students = Students;
-        _pdfService.SaveReport(_group);
+        Group.Students = StudentsByGroup.Result;
+        _pdfService.SaveReport(Group);
     }
 
-    public Group GetGroup()
+    private bool CanOpenStudentEditDialogOrDeleteStudent(Student? student)
     {
-        return _group;
+        return student is not null;
     }
-
-    private bool CanOpenEditStudentWindowOrDeleteStudent(StudentViewModel? studentViewModel)
+    
+    private async Task<ObservableCollection<Student>> GetStudentsByGroupAsync()
     {
-        return studentViewModel is not null;
-    }
-
-    private async Task LoadStudentsByGroupAsync()
-    {
-        var students = await _groupService.GetGroupStudentsAsync(_group.Id);
-        var studentsList = new List<Student>(students);
+        var students = await _groupService.GetGroupStudentsAsync(Group.Id).ConfigureAwait(false);
         
-        Students.Clear();
-        Students.AddRange(studentsList);
-        
-        var viewModels = studentsList.Select(student => new StudentViewModel(student));
+        var observeStudents = new ObservableCollection<Student>(students);
 
-        StudentsByGroupViews = new ObservableCollection<StudentViewModel>(viewModels);
+        return observeStudents;
+    }
+
+    private async Task<ObservableCollection<Group>> GetGroupsAsync()
+    {
+        var groups = await _groupService.GetAllAsync().ConfigureAwait(false);
+        
+        var observeGroups = new ObservableCollection<Group>(groups);
+
+        return observeGroups;
     }
 }

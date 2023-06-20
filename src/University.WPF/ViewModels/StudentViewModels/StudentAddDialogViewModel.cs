@@ -8,19 +8,19 @@ using University.Core.Models;
 
 namespace University.WPF.ViewModels.StudentViewModels;
 
-public partial class CreateStudentViewModel : ObservableObject, IResultHolder, IClosable
+public partial class StudentAddDialogViewModel : ObservableObject, IResultHolder, IClosable
 {
     private readonly IGroupService<Group> _groupService;
     private readonly IStudentService<Student> _studentService;
 
-    public CreateStudentViewModel(
+    public StudentAddDialogViewModel(
         IGroupService<Group> groupService,
         IStudentService<Student> studentService)
     {
         _groupService = groupService;
         _studentService = studentService;
 
-        LoadGroupsAsync().GetAwaiter();
+        Groups = new NotifyTask<ObservableCollection<Group>>(GetGroupsAsync());
     }
 
     public object? Result { get; private set; }
@@ -37,7 +37,7 @@ public partial class CreateStudentViewModel : ObservableObject, IResultHolder, I
     private Group? selectedGroup;
 
     [ObservableProperty] 
-    private ObservableCollection<Group> groups = new();
+    private NotifyTask<ObservableCollection<Group>> groups;
     
     [RelayCommand]
     private void CreateStudent()
@@ -60,12 +60,12 @@ public partial class CreateStudentViewModel : ObservableObject, IResultHolder, I
         FinishInterAction!();
     }
 
-    private async Task LoadGroupsAsync()
+    private async Task<ObservableCollection<Group>> GetGroupsAsync()
     {
-        var enumerableGroups = await _groupService.GetAllAsync();
+        var groups = await _groupService.GetAllAsync().ConfigureAwait(false);
 
-        Groups = new ObservableCollection<Group>(enumerableGroups);
+        var observeGroups = new ObservableCollection<Group>(groups);
 
-        SelectedGroup = Groups[0];
+        return observeGroups;
     }
 }

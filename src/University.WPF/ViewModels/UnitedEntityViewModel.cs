@@ -4,7 +4,7 @@ namespace University.WPF.ViewModels;
 
 public partial class UnitedEntityViewModel : ObservableObject
 {
-    public UnitedEntityViewModel(int id, string name)
+    protected UnitedEntityViewModel(int id, string name)
     {
         Id = id;
         Name = name;
@@ -18,4 +18,7 @@ public partial class UnitedEntityViewModel : ObservableObject
 
     [ObservableProperty]
     private bool isSelected;
+
+    [ObservableProperty] 
+    private bool isExpanded;
 }

@@ -8,7 +8,7 @@ using University.Core.Interfaces;
 using University.Core.Models;
 using University.WPF.Services;
 using University.WPF.ViewModels.GroupViewModels;
-using University.WPF.Views.GroupViews;
+using University.WPF.Views.UserControls.GroupViews;
 
 namespace University.WPF.ViewModels.CourseViewModels;
 
@@ -23,9 +23,8 @@ public partial class CourseViewModel : UnitedEntityViewModel
     private readonly IPdfService _pdfService;
     private readonly IConfiguration _configuration;
 
-    private readonly Course _course;
-
     public CourseViewModel(
+        Course course,
         ICourseService<Course> courseService,
         IGroupService<Group> groupService,
         IStudentService<Student> studentService,
@@ -33,9 +32,8 @@ public partial class CourseViewModel : UnitedEntityViewModel
         IDialogService dialogService,
         ICsvService csvService,
         IPdfService pdfService,
-        IConfiguration configuration,
-        Course course
-        ) : base(course.Id, course.Name)
+        IConfiguration configuration) 
+        : base(course.Id, course.Name)
     {
         _courseService = courseService;
         _groupService = groupService;
@@ -45,26 +43,32 @@ public partial class CourseViewModel : UnitedEntityViewModel
         _csvService = csvService;
         _pdfService = pdfService;
         _configuration = configuration;
-        _course = course;
 
-        Description = course.Description!;
+        Course = course;
 
-        GroupsByCourseViews = new NotifyTask<ObservableCollection<GroupViewModel>>(GetGroupsByCourseAsync());
+        GroupsViewModelByCourse = new NotifyTask<ObservableCollection<GroupViewModel>>(GetGroupsViewModelByCourseAsync());
+        GroupsByCourse = new NotifyTask<ObservableCollection<Group>>(GetGroupsByCourseAsync());
     }
-    
+
     [ObservableProperty] 
-    private string description;
+    private Course course;
+
+    [ObservableProperty] 
+    private CourseViewModel? selectedItem;
+
+    [ObservableProperty] 
+    [NotifyCanExecuteChangedFor(nameof(OpenEditGroupDialogCommand))]
+    [NotifyCanExecuteChangedFor(nameof(DeleteGroupCommand))]
+    private Group? selectedGroup;
 
     [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(OpenEditGroupWindowCommand))]
-    [NotifyCanExecuteChangedFor(nameof(DeleteGroupCommand))]
-    private GroupViewModel? selectedGroupViewModel;
+    private NotifyTask<ObservableCollection<GroupViewModel>> groupsViewModelByCourse;
 
     [ObservableProperty] 
-    private NotifyTask<ObservableCollection<GroupViewModel>> groupsByCourseViews;
-
+    private NotifyTask<ObservableCollection<Group>> groupsByCourse;
+    
     [RelayCommand]
-    private void OpenCreateGroupWindow()
+    private void OpenAddGroupDialog()
     {
         IDialogConfiguration dialogConfiguration = new DialogConfiguration()
         {
@@ -73,17 +77,20 @@ public partial class CourseViewModel : UnitedEntityViewModel
             Width = 400
         };
         
-        var group = (GroupViewModel) _dialogService.ShowDialog(
-            new CreateGroupView(), 
-            new CreateGroupViewModel(_courseService, _groupService, _teacherService),
+        var group = (Group) _dialogService.ShowDialog(
+            new GroupAddDialogView(), 
+            new GroupAddDialogViewModel(_courseService, _groupService, _teacherService),
             dialogConfiguration)!;
         
-        GroupsByCourseViews = new NotifyTask<ObservableCollection<GroupViewModel>>(GetGroupsByCourseAsync());
+        GroupsByCourse = new NotifyTask<ObservableCollection<Group>>(GetGroupsByCourseAsync());
+        
+        GroupsViewModelByCourse =
+            new NotifyTask<ObservableCollection<GroupViewModel>>(GetGroupsViewModelByCourseAsync());
     }
     
     
-    [RelayCommand(CanExecute = nameof(CanOpenEditGroupWindowOrDeleteGroup))]
-    private void OpenEditGroupWindow(GroupViewModel groupViewModel)
+    [RelayCommand(CanExecute = nameof(CanOpenEditGroupDialogOrDeleteGroup))]
+    private void OpenEditGroupDialog(Group oldGroup)
     {
         IDialogConfiguration dialogConfiguration = new DialogConfiguration()
         {
@@ -92,41 +99,57 @@ public partial class CourseViewModel : UnitedEntityViewModel
             Width = 400
         };
         
-        var group = (GroupViewModel) _dialogService.ShowDialog(
-            new EditGroupView(), 
-            new EditGroupViewModel(_groupService),
-            dialogConfiguration, groupViewModel)!;
+        var group = (Group) _dialogService.ShowDialog(
+            new GroupEditDialogView(), 
+            new GroupEditDialogViewModel(_groupService),
+            dialogConfiguration, oldGroup)!;
         
-        GroupsByCourseViews = new NotifyTask<ObservableCollection<GroupViewModel>>(GetGroupsByCourseAsync());
+        GroupsByCourse = new NotifyTask<ObservableCollection<Group>>(GetGroupsByCourseAsync());
+        
+        GroupsViewModelByCourse =
+            new NotifyTask<ObservableCollection<GroupViewModel>>(GetGroupsViewModelByCourseAsync());
     }
 
-    [RelayCommand(CanExecute = nameof(CanOpenEditGroupWindowOrDeleteGroup))]
-    private void DeleteGroup(GroupViewModel groupViewModel)
+    [RelayCommand(CanExecute = nameof(CanOpenEditGroupDialogOrDeleteGroup))]
+    private void DeleteGroup(Group oldGroup)
     {
-        if (groupViewModel.GetGroup().Students.Count == 0)
+        if (oldGroup.Students.Count == 0)
         {
             return;
         }
         
-        _groupService.DeleteAsync(groupViewModel.GetGroup());
+        _groupService.DeleteAsync(oldGroup);
         
-        GroupsByCourseViews = new NotifyTask<ObservableCollection<GroupViewModel>>(GetGroupsByCourseAsync());
-    }
-
-    private bool CanOpenEditGroupWindowOrDeleteGroup(GroupViewModel? groupViewModel)
-    { 
-        return groupViewModel is not null && groupViewModel.CourseId == Id;
+        GroupsByCourse = new NotifyTask<ObservableCollection<Group>>(GetGroupsByCourseAsync());
+        
+        GroupsViewModelByCourse =
+            new NotifyTask<ObservableCollection<GroupViewModel>>(GetGroupsViewModelByCourseAsync());
     }
     
-    private async Task<ObservableCollection<GroupViewModel>> GetGroupsByCourseAsync()
+    private bool CanOpenEditGroupDialogOrDeleteGroup(Group? group)
     {
-        var groups = await _courseService.GetCourseGroupsAsync(_course.Id).ConfigureAwait(false);
+        return group is not null;
+    }
+    
+    private async Task<ObservableCollection<GroupViewModel>> GetGroupsViewModelByCourseAsync()
+    {
+        var groups = await _courseService.GetCourseGroupsAsync(Course.Id).ConfigureAwait(false);
         
-        var viewModels = groups.Select(group => new GroupViewModel(
-            _groupService, _studentService, _dialogService, _csvService, _pdfService, _configuration, group));
+        var viewModels = groups.Select(group => 
+            new GroupViewModel(
+                _groupService, _studentService, _dialogService, _csvService, _pdfService, _configuration, group));
 
         var observeViewModels = new ObservableCollection<GroupViewModel>(viewModels);
 
         return observeViewModels;
+    }
+    
+    private async Task<ObservableCollection<Group>> GetGroupsByCourseAsync()
+    {
+        var groups = await _courseService.GetCourseGroupsAsync(Course.Id).ConfigureAwait(false);
+
+        var observeGroups = new ObservableCollection<Group>(groups);
+
+        return observeGroups;
     }
 }

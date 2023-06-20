@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.Extensions.Configuration;
 using University.Core.Interfaces;
 using University.Core.Models;
@@ -10,7 +9,7 @@ using University.WPF.ViewModels.CourseViewModels;
 
 namespace University.WPF.ViewModels;
 
-public partial class HomeViewModel : UnitedEntityViewModel
+public partial class NavigationViewModel : ObservableObject
 {
     private readonly ICourseService<Course> _courseService;
     private readonly IGroupService<Group> _groupService;
@@ -21,7 +20,7 @@ public partial class HomeViewModel : UnitedEntityViewModel
     private readonly IPdfService _pdfService;
     private readonly IConfiguration _configuration;
 
-    public HomeViewModel(
+    public NavigationViewModel(
         ICourseService<Course> courseService,
         IGroupService<Group> groupService,
         IStudentService<Student> studentService,
@@ -29,8 +28,7 @@ public partial class HomeViewModel : UnitedEntityViewModel
         IDialogService dialogService,
         ICsvService csvService,
         IPdfService pdfService,
-        IConfiguration configuration,
-        int id, string name) : base(id, name)
+        IConfiguration configuration)
     {
         _courseService = courseService;
         _groupService = groupService;
@@ -41,19 +39,34 @@ public partial class HomeViewModel : UnitedEntityViewModel
         _pdfService = pdfService;
         _configuration = configuration;
 
-        LoadCourseViewModelsAsync().GetAwaiter();
+        MenuItems = new ObservableCollectionListSource<UnitedEntityViewModel>(GetMenuItems());
+
+        SelectedMenuItem = MenuItems[0];
     }
-    
-    [ObservableProperty]
-    private ObservableCollection<CourseViewModel> courseViewModels = new(new List<CourseViewModel>());
-    
-    private async Task LoadCourseViewModelsAsync()
+
+    [ObservableProperty] 
+    private ObservableCollection<UnitedEntityViewModel> menuItems;
+
+    [ObservableProperty] 
+    private UnitedEntityViewModel selectedMenuItem;
+
+    private IEnumerable<UnitedEntityViewModel> GetMenuItems()
     {
-        var courses = await _courseService.GetAllAsync();
-        var viewModels = courses.Select(course => 
-            new CourseViewModel(_courseService, _groupService, _studentService, 
-                _teacherService, _dialogService, _csvService, _pdfService, _configuration, course));
-        
-        CourseViewModels = new ObservableCollection<CourseViewModel>(viewModels);
+        var items = _configuration.GetSection("Menu").Get<string[]>();
+
+        var result = new List<UnitedEntityViewModel>
+        {
+            new CourseWorkSpaceViewModel(
+                _courseService, _groupService, _studentService, _teacherService, _dialogService,
+                _csvService, _pdfService, _configuration, 0, items![0]),
+            
+            new GroupViewModels.GroupViewModel(_groupService, _studentService,
+                _dialogService, _csvService, _pdfService, _configuration, new Group { Id = 1, Name = items[1]}),
+            
+            new StudentViewModels.StudentViewModel(_studentService, new Student {Id = 2, FirstName = items[2]}),
+            new TeacherViewModel(_teacherService, new Teacher {Id = 3, FirstName = items[3]})
+        };
+
+        return result;
     }
 }

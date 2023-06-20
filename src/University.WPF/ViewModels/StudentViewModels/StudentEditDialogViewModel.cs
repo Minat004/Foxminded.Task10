@@ -6,11 +6,11 @@ using University.Core.Models;
 
 namespace University.WPF.ViewModels.StudentViewModels;
 
-public partial class EditStudentViewModel : ObservableObject, IDataHolder, IResultHolder, IClosable
+public partial class StudentEditDialogViewModel : ObservableObject, IDataHolder, IResultHolder, IClosable
 {
     private readonly IStudentService<Student> _studentService;
 
-    public EditStudentViewModel(IStudentService<Student> studentService)
+    public StudentEditDialogViewModel(IStudentService<Student> studentService)
     {
         _studentService = studentService;
     }
@@ -26,7 +26,7 @@ public partial class EditStudentViewModel : ObservableObject, IDataHolder, IResu
         set
         {
             _data = value;
-            CurrentStudent = ((StudentViewModel)_data!).GetStudent();
+            CurrentStudent = (Student)_data!;
         }
     }
 

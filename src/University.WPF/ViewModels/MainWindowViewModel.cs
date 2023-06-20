@@ -1,7 +1,4 @@
-﻿using System.Collections.ObjectModel;
-using System.Linq;
-using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.Extensions.Configuration;
 using University.Core.Interfaces;
 using University.Core.Models;
@@ -21,35 +18,10 @@ public partial class MainWindowViewModel : ObservableObject
         IConfiguration configuration,
         ICsvService csvService)
     {
-        HomeViewModels.Add(
-            new HomeViewModel(courseService, groupService, studentService, teacherService, 
-                dialogService, csvService, pdfService, configuration, 0, "Course"));
-
-        SelectedItem = HomeViewModels[0];
+        Menu = 
+            new NavigationViewModel(
+                courseService, groupService, studentService, teacherService, dialogService, csvService, pdfService, configuration);
     }
 
-    [ObservableProperty]
-    private ObservableCollection<HomeViewModel> homeViewModels = new();
-
-    [ObservableProperty] 
-    private UnitedEntityViewModel? selectedItem;
-
-    [RelayCommand]
-    private void SetSelectedItem()
-    {
-        foreach (var courseViewModel in HomeViewModels[0].CourseViewModels)
-        {
-            if (courseViewModel.IsSelected)
-            {
-                SelectedItem = courseViewModel;
-                return;
-            }
-
-            SelectedItem = courseViewModel.GroupsByCourseViews.FirstOrDefault(x => x.IsSelected);
-
-            if (SelectedItem is not null) return;
-
-            SelectedItem = HomeViewModels[0];
-        }
-    }
+    public NavigationViewModel Menu { get; }
 }

@@ -6,11 +6,11 @@ using University.Core.Models;
 
 namespace University.WPF.ViewModels.GroupViewModels;
 
-public partial class EditGroupViewModel : ObservableObject, IDataHolder, IResultHolder, IClosable
+public partial class GroupEditDialogViewModel : ObservableObject, IDataHolder, IResultHolder, IClosable
 {
     private readonly IGroupService<Group> _groupService;
 
-    public EditGroupViewModel(IGroupService<Group> groupService)
+    public GroupEditDialogViewModel(IGroupService<Group> groupService)
     {
         _groupService = groupService;
     }
@@ -26,7 +26,7 @@ public partial class EditGroupViewModel : ObservableObject, IDataHolder, IResult
         set
         {
             _data = value;
-            CurrentGroup = ((GroupViewModel)value!).GetGroup();
+            CurrentGroup = (Group)value!;
             TeacherFullName = $"{CurrentGroup.Teacher!.FirstName} {CurrentGroup.Teacher.LastName}";
         }
     }
@@ -41,6 +41,8 @@ public partial class EditGroupViewModel : ObservableObject, IDataHolder, IResult
     private void EditGroup()
     {
         _groupService.UpdateAsync(CurrentGroup!);
+
+        Result = CurrentGroup;
 
         FinishInterAction!();
     }

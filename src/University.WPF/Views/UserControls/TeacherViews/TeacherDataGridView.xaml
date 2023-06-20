@@ -1,33 +1,31 @@
-﻿<UserControl x:Class="University.WPF.Views.CourseViews.CourseView"
+﻿<UserControl x:Class="University.WPF.Views.UserControls.TeacherViews.TeacherDataGridView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:local="clr-namespace:University.WPF.Views"
+             xmlns:local="clr-namespace:University.WPF.Views.UserControls"
              xmlns:vm="clr-namespace:University.WPF.ViewModels"
-             xmlns:courseViewModels="clr-namespace:University.WPF.ViewModels.CourseViewModels"
              mc:Ignorable="d"
-             d:DataContext="{d:DesignInstance Type=courseViewModels:CourseViewModel}"
-             d:DesignHeight="300" d:DesignWidth="500">
+             d:DesignHeight="300" d:DesignWidth="300"
+             d:DataContext="{d:DesignInstance Type=vm:TeacherViewModel}">
     
     <Grid>
-        
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"></ColumnDefinition>
+            <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"></RowDefinition>
-            <RowDefinition Height="*"></RowDefinition>
-            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         
-        <TextBlock Grid.Row="0" Text="{Binding Name}"/>
+        <TextBlock Grid.Row="0" 
+                   Text="{Binding Name}"/>
         
         <DataGrid Grid.Row="1"
-                  SelectedItem="{Binding SelectedGroupViewModel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                  ItemsSource="{Binding GroupsByCourseViews.Result}"
+                  SelectedItem="{Binding SelectedItem}"
+                  ItemsSource="{Binding Collection, RelativeSource={RelativeSource AncestorType=UserControl}}"
                   AutoGenerateColumns="False"
-                  SelectionMode="Single"
                   CanUserAddRows="False"
                   CanUserDeleteRows="False">
             
@@ -36,15 +34,22 @@
                 <DataGridTextColumn Width="Auto" 
                                     Header="Id" 
                                     Binding="{Binding Id}"/>
-                <DataGridTextColumn Width="*" 
-                                    Header="Name" 
-                                    Binding="{Binding Name}"/>
+                <DataGridTemplateColumn Width="*"
+                                        Header="Name">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="{Binding FirstName}"/>
+                                <TextBlock Text=" "/>
+                                <TextBlock Text="{Binding LastName}"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
                 <DataGridTextColumn Width="*"
-                                    Header="Course"
-                                    Binding="{Binding CourseName}"/>
-                <DataGridTextColumn Width="*"
-                                    Header="Teacher"
-                                    Binding="{Binding TeacherFullName}"/>
+                                    Header="Group"
+                                    Binding="{Binding Group.Name}"/>
+                
             </DataGrid.Columns>
             
         </DataGrid>
@@ -52,33 +57,32 @@
         <Border Grid.Row="2">
             <StackPanel Orientation="Horizontal"
                         HorizontalAlignment="Right">
-
+                
                 <!-- Create -->
                 <Button Content="Create" 
                         Width="Auto"
                         Margin="5"
-                        Command="{Binding OpenCreateGroupWindowCommand}"
+                        Command="{Binding OpenCreateStudentWindowCommand}"
                         Padding="2"/>
                 
                 <!-- Edit -->
                 <Button Content="Edit" 
                         Width="Auto"
                         Margin="5"
-                        Command="{Binding OpenEditGroupWindowCommand}"
-                        CommandParameter="{Binding SelectedGroupViewModel}"
+                        Command="{Binding OpenEditStudentWindowCommand}"
+                        CommandParameter="{Binding SelectedItem}"
                         Padding="2"/>
                 
                 <!-- Delete -->
                 <Button Content="Delete" 
                         Width="Auto"
                         Margin="5"
-                        Command="{Binding DeleteGroupCommand}"
-                        CommandParameter="{Binding SelectedGroupViewModel}"
+                        Command="{Binding DeleteStudentCommand}"
+                        CommandParameter="{Binding SelectedItem}"
                         Padding="2"/>
 
             </StackPanel>
         </Border>
-        
     </Grid>
     
 </UserControl>

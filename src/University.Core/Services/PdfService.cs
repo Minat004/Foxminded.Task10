@@ -12,7 +12,10 @@ public class PdfService : IPdfService
 {
     public void SaveReport(Group group)
     {
-        GlobalFontSettings.FontResolver = new FailsafeFontResolver();
+        if (GlobalFontSettings.FontResolver is not FailsafeFontResolver)
+        {
+            GlobalFontSettings.FontResolver = new FailsafeFontResolver();
+        }
         
         var document = new Document
         {

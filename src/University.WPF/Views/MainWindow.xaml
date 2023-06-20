@@ -3,104 +3,49 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:University.WPF"
         xmlns:vm="clr-namespace:University.WPF.ViewModels"
-        xmlns:uc="clr-namespace:University.WPF.Views"
-        xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
-        xmlns:cvm="clr-namespace:University.WPF.ViewModels.CourseViewModels"
-        xmlns:gvm="clr-namespace:University.WPF.ViewModels.GroupViewModels"
-        xmlns:courseViews="clr-namespace:University.WPF.Views.CourseViews"
+        xmlns:uc="clr-namespace:University.WPF.Views.UserControls"
+        xmlns:gview="clr-namespace:University.WPF.Views.UserControls.GroupViews"
+        xmlns:cview="clr-namespace:University.WPF.Views.UserControls.CourseViews"
+        xmlns:studentViews="clr-namespace:University.WPF.Views.UserControls.StudentViews"
+        xmlns:teacherViews="clr-namespace:University.WPF.Views.UserControls.TeacherViews"
+        xmlns:groupViewModels="clr-namespace:University.WPF.ViewModels.GroupViewModels"
+        xmlns:studentViewModels="clr-namespace:University.WPF.ViewModels.StudentViewModels"
+        xmlns:courseViewModels="clr-namespace:University.WPF.ViewModels.CourseViewModels"
         mc:Ignorable="d"
         Title="University" Height="450" Width="800"
         d:DataContext="{d:DesignInstance Type=vm:MainWindowViewModel}"
         FontSize="18">
     
     <Window.Resources>
-        <DataTemplate DataType="{x:Type vm:HomeViewModel}">
-            <uc:HomeView/>
+        <DataTemplate DataType="{x:Type courseViewModels:CourseWorkSpaceViewModel}">
+            <cview:CourseWorkSpaceView/>
         </DataTemplate>
-        <DataTemplate DataType="{x:Type cvm:CourseViewModel}">
-            <courseViews:CourseView/>
+        <DataTemplate DataType="{x:Type groupViewModels:GroupViewModel}">
+            <gview:GroupDataGridView Collection="{Binding Groups.Result}"/>
         </DataTemplate>
-        <DataTemplate DataType="{x:Type gvm:GroupViewModel}">
-            <uc:GroupView/>
+        <DataTemplate DataType="{x:Type studentViewModels:StudentViewModel}">
+            <studentViews:StudentDataGridView Collection="{Binding Students.Result}"/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:TeacherViewModel}">
+            <teacherViews:TeacherDataGridView Collection="{Binding Teachers.Result}"/>
         </DataTemplate>
     </Window.Resources>
     
     <Grid ShowGridLines="True">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"></ColumnDefinition>
-            <ColumnDefinition Width="2*"></ColumnDefinition>
+            <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"></RowDefinition>
-            <RowDefinition Height="*"></RowDefinition>
-            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         
-        <!-- Header -->
-        <StackPanel Grid.Row="0"
-                    Grid.Column="0"
-                    Grid.ColumnSpan="2"
-                    Orientation="Horizontal">
-            
-            <Border>
-                <TextBlock Text="University"
-                           Margin="5"
-                           HorizontalAlignment="Center"/>
-            </Border>
-            
-            <ListBox BorderThickness="0">
-                <ListBox.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <StackPanel Orientation="Horizontal"/>
-                    </ItemsPanelTemplate>
-                </ListBox.ItemsPanel>
-                <ListBoxItem>Courses</ListBoxItem>
-                <ListBoxItem>Groups</ListBoxItem>
-                <ListBoxItem>Students</ListBoxItem>
-                <ListBoxItem>Teachers</ListBoxItem>
-            </ListBox>
-            
-        </StackPanel>
-        
-        <TreeView Grid.Row="1"
-                  Grid.Column="0"
-                  Grid.RowSpan="2"
-                  ItemsSource="{Binding HomeViewModels}">
-            
-            <b:Interaction.Triggers>
-                <b:EventTrigger EventName="SelectedItemChanged">
-                    <b:InvokeCommandAction
-                        Command="{Binding SetSelectedItemCommand}"/>
-                </b:EventTrigger>
-            </b:Interaction.Triggers>
-            
-            <TreeView.ItemContainerStyle>
-                <Style TargetType="TreeViewItem">
-                    <Setter Property="IsSelected" 
-                            Value="{Binding IsSelected}"/>
-                </Style>
-            </TreeView.ItemContainerStyle>
-            
-            <TreeView.ItemTemplate>
-                <HierarchicalDataTemplate ItemsSource="{Binding CourseViewModels}">
-                    <TextBlock Text="{Binding Name}"/>
-                    <HierarchicalDataTemplate.ItemTemplate>
-                        <HierarchicalDataTemplate ItemsSource="{Binding GroupsByCourseViews, UpdateSourceTrigger=PropertyChanged}" 
-                                                  DataType="{x:Type cvm:CourseViewModel}">
-                            <TextBlock Text="{Binding Name}"/>
-                        </HierarchicalDataTemplate>  
-                    </HierarchicalDataTemplate.ItemTemplate>
-                </HierarchicalDataTemplate>
-            </TreeView.ItemTemplate>
-
-        </TreeView>
+        <uc:NavigationView Grid.Row="0"
+                           DataContext="{Binding Menu}"/>
         
         <ContentControl Grid.Row="1"
-                        Grid.Column="1"
-                        Grid.RowSpan="2"
-                        Content="{Binding SelectedItem}"/>
+                        Content="{Binding Menu.SelectedMenuItem}"/>
         
     </Grid>
 </Window>

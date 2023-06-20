@@ -8,13 +8,13 @@ using University.Core.Models;
 
 namespace University.WPF.ViewModels.GroupViewModels;
 
-public partial class CreateGroupViewModel : ObservableObject, IResultHolder, IClosable
+public partial class GroupAddDialogViewModel : ObservableObject, IResultHolder, IClosable
 {
     private readonly ICourseService<Course> _courseService;
     private readonly IGroupService<Group> _groupService;
     private readonly ITeacherService<Teacher> _teacherService;
 
-    public CreateGroupViewModel(
+    public GroupAddDialogViewModel(
         ICourseService<Course> courseService,
         IGroupService<Group> groupService,
         ITeacherService<Teacher> teacherService)
@@ -23,8 +23,13 @@ public partial class CreateGroupViewModel : ObservableObject, IResultHolder, ICl
         _groupService = groupService;
         _teacherService = teacherService;
 
-        LoadCoursesAsync().GetAwaiter();
-        LoadTeachersAsync().GetAwaiter();
+        Courses = new NotifyTask<ObservableCollection<Course>>(GetCoursesAsync());
+
+        Teachers = new NotifyTask<ObservableCollection<Teacher>>(GetTeachersAsync());
+
+        // SelectedCourse = Courses.Result[0];
+
+        // SelectedTeacher = Teachers.Result[0];
     }
 
     public object? Result { get; private set; }
@@ -41,10 +46,10 @@ public partial class CreateGroupViewModel : ObservableObject, IResultHolder, ICl
     private Teacher? selectedTeacher;
 
     [ObservableProperty]
-    private ObservableCollection<Course> courses = new();
+    private NotifyTask<ObservableCollection<Course>> courses;
 
     [ObservableProperty]
-    private ObservableCollection<Teacher> teachers = new();
+    private NotifyTask<ObservableCollection<Teacher>> teachers;
 
     [RelayCommand]
     private void CreateGroup()
@@ -67,21 +72,21 @@ public partial class CreateGroupViewModel : ObservableObject, IResultHolder, ICl
         FinishInterAction!();
     }
 
-    private async Task LoadCoursesAsync()
+    private async Task<ObservableCollection<Course>> GetCoursesAsync()
     {
-        var enumerableCourses = await _courseService.GetAllAsync();
+        var courses = await _courseService.GetAllAsync().ConfigureAwait(false);
         
-        Courses = new ObservableCollection<Course>(enumerableCourses);
-        
-        SelectedCourse = Courses[0];
+        var observeCourses = new ObservableCollection<Course>(courses);
+
+        return observeCourses;
     }
 
-    private async Task LoadTeachersAsync()
+    private async Task<ObservableCollection<Teacher>> GetTeachersAsync()
     {
-        var enumerableTeachers = await _teacherService.GetAllAsync();
+        var teachers = await _teacherService.GetAllAsync().ConfigureAwait(false);
 
-        Teachers = new ObservableCollection<Teacher>(enumerableTeachers);
+        var observeTeachers = new ObservableCollection<Teacher>(teachers);
 
-        SelectedTeacher = Teachers[0];
+        return observeTeachers;
     }
 }

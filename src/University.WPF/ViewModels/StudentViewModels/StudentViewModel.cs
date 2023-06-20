@@ -1,23 +1,39 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.Collections.ObjectModel;
+using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.ComponentModel;
+using University.Core.Interfaces;
 using University.Core.Models;
 
 namespace University.WPF.ViewModels.StudentViewModels;
 
 public partial class StudentViewModel : UnitedEntityViewModel
 {
-    private readonly Student _student;
+    private readonly IStudentService<Student> _studentService;
 
-    public StudentViewModel(Student student) : base(student.Id, $"{student.FirstName} {student.LastName}")
+    public StudentViewModel(
+        IStudentService<Student> studentService,
+        Student student)
+        : base(student.Id, student.FirstName)
     {
-        _student = student;
-        GroupName = student.Group!.Name;
+        _studentService = studentService;
+        
+        Student = student;
+
+        Students = new NotifyTask<ObservableCollection<Student>>(GetStudentsAsync());
     }
 
-    [ObservableProperty] 
-    private string groupName;
+    [ObservableProperty]
+    private Student student;
 
-    public Student GetStudent()
+    [ObservableProperty] 
+    private NotifyTask<ObservableCollection<Student>> students;
+    
+    private async Task<ObservableCollection<Student>> GetStudentsAsync()
     {
-        return _student;
+        var students = await _studentService.GetAllAsync().ConfigureAwait(false);
+        
+        var observeStudents = new ObservableCollection<Student>(students);
+
+        return observeStudents;
     }
 }
