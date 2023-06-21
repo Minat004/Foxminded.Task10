@@ -21,10 +21,10 @@
         <DataTemplate DataType="{x:Type courseViewModels:CourseWorkSpaceViewModel}">
             <cview:CourseWorkSpaceView/>
         </DataTemplate>
-        <DataTemplate DataType="{x:Type groupViewModels:GroupViewModel}">
+        <DataTemplate DataType="{x:Type courseViewModels:CourseViewModel}">
             <gview:GroupDataGridView Collection="{Binding Groups.Result}"/>
         </DataTemplate>
-        <DataTemplate DataType="{x:Type studentViewModels:StudentViewModel}">
+        <DataTemplate DataType="{x:Type groupViewModels:GroupViewModel}">
             <studentViews:StudentDataGridView Collection="{Binding Students.Result}"/>
         </DataTemplate>
         <DataTemplate DataType="{x:Type vm:TeacherViewModel}">

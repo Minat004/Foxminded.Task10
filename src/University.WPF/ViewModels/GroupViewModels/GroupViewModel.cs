@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Win32;
 using University.Core.Interfaces;
 using University.Core.Models;
 using University.Core.Models.Mapping;
@@ -42,7 +43,7 @@ public partial class GroupViewModel : UnitedEntityViewModel
 
         StudentsByGroup = new NotifyTask<ObservableCollection<Student>>(GetStudentsByGroupAsync());
 
-        Groups = new NotifyTask<ObservableCollection<Group>>(GetGroupsAsync());
+        Students = new NotifyTask<ObservableCollection<Student>>(GetStudentsAsync());
     }
 
     [ObservableProperty] 
@@ -52,7 +53,7 @@ public partial class GroupViewModel : UnitedEntityViewModel
     private NotifyTask<ObservableCollection<Student>> studentsByGroup;
 
     [ObservableProperty] 
-    private NotifyTask<ObservableCollection<Group>> groups;
+    private NotifyTask<ObservableCollection<Student>> students;
 
     [ObservableProperty] 
     private GroupViewModel? selectedItem;
@@ -75,11 +76,11 @@ public partial class GroupViewModel : UnitedEntityViewModel
         var student = (Student) _dialogService.ShowDialog(
             new StudentAddWindowView(), 
             new StudentAddDialogViewModel(_groupService, _studentService),
-            dialogConfiguration)!;
+            dialogConfiguration, null!)!;
 
         StudentsByGroup = new NotifyTask<ObservableCollection<Student>>(GetStudentsByGroupAsync());
 
-        Groups = new NotifyTask<ObservableCollection<Group>>(GetGroupsAsync());
+        Students = new NotifyTask<ObservableCollection<Student>>(GetStudentsAsync());
     }
     
     
@@ -100,7 +101,7 @@ public partial class GroupViewModel : UnitedEntityViewModel
         
         StudentsByGroup = new NotifyTask<ObservableCollection<Student>>(GetStudentsByGroupAsync());
 
-        Groups = new NotifyTask<ObservableCollection<Group>>(GetGroupsAsync());
+        Students = new NotifyTask<ObservableCollection<Student>>(GetStudentsAsync());
     }
 
     [RelayCommand(CanExecute = nameof(CanOpenStudentEditDialogOrDeleteStudent))]
@@ -110,32 +111,44 @@ public partial class GroupViewModel : UnitedEntityViewModel
         
         StudentsByGroup = new NotifyTask<ObservableCollection<Student>>(GetStudentsByGroupAsync());
 
-        Groups = new NotifyTask<ObservableCollection<Group>>(GetGroupsAsync());
+        Students = new NotifyTask<ObservableCollection<Student>>(GetStudentsAsync());
     }
 
     [RelayCommand]
     private void ImportStudents()
     {
-        var filePath = _configuration["CsvHelper:ImportFilePath"];
-        
-        _csvService.Save<Student, StudentMapCsvSave>(filePath!, Group.Students);
+        var saveFileDialog = new SaveFileDialog()
+        {
+            Filter = "CSV files (*.csv)|*.csv|TXT files (*.txt)|*.txt"
+        };
+
+        if (saveFileDialog.ShowDialog() == true)
+        {
+            _csvService.Save<Student, StudentMapCsvSave>(saveFileDialog.FileName, StudentsByGroup.Result);
+        }
     }
 
     [RelayCommand]
     private void ExportStudents()
     {
-        var filePath = _configuration["CsvHelper:ExportFilePath"];
-
-        var loadStudents = _csvService.Load<Student, StudentMapCsvLoad>(filePath!);
-
-        foreach (var student in loadStudents)
+        var openFileDialog = new OpenFileDialog
         {
-            _studentService.AddAsync(student!);
+            Filter = "CSV files (*.csv)|*.csv"
+        };
+
+        if (openFileDialog.ShowDialog() == true)
+        {
+            var loadStudents = _csvService.Load<Student, StudentMapCsvLoad>(openFileDialog.FileName);
+
+            foreach (var student in loadStudents)
+            {
+                _studentService.AddAsync(student!);
+            }
+
+            StudentsByGroup = new NotifyTask<ObservableCollection<Student>>(GetStudentsByGroupAsync());
+
+            Students = new NotifyTask<ObservableCollection<Student>>(GetStudentsAsync());
         }
-
-        StudentsByGroup = new NotifyTask<ObservableCollection<Student>>(GetStudentsByGroupAsync());
-
-        Groups = new NotifyTask<ObservableCollection<Group>>(GetGroupsAsync());
     }
     
     [RelayCommand]
@@ -159,12 +172,12 @@ public partial class GroupViewModel : UnitedEntityViewModel
         return observeStudents;
     }
 
-    private async Task<ObservableCollection<Group>> GetGroupsAsync()
+    private async Task<ObservableCollection<Student>> GetStudentsAsync()
     {
-        var groups = await _groupService.GetAllAsync().ConfigureAwait(false);
+        var students = await _studentService.GetAllAsync().ConfigureAwait(false);
         
-        var observeGroups = new ObservableCollection<Group>(groups);
+        var observeStudents = new ObservableCollection<Student>(students);
 
-        return observeGroups;
+        return observeStudents;
     }
 }

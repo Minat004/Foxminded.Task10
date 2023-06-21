@@ -61,6 +61,8 @@ public partial class GroupAddDialogViewModel : ObservableObject, IResultHolder, 
             TeacherId = SelectedTeacher!.Id,
         };
 
+        Result = group;
+
         _groupService.AddAsync(group);
 
         FinishInterAction!();

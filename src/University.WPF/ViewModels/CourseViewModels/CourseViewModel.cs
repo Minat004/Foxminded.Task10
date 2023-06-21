@@ -48,6 +48,7 @@ public partial class CourseViewModel : UnitedEntityViewModel
 
         GroupsViewModelByCourse = new NotifyTask<ObservableCollection<GroupViewModel>>(GetGroupsViewModelByCourseAsync());
         GroupsByCourse = new NotifyTask<ObservableCollection<Group>>(GetGroupsByCourseAsync());
+        Groups = new NotifyTask<ObservableCollection<Group>>(GetGroupsAsync());
     }
 
     [ObservableProperty] 
@@ -66,7 +67,10 @@ public partial class CourseViewModel : UnitedEntityViewModel
 
     [ObservableProperty] 
     private NotifyTask<ObservableCollection<Group>> groupsByCourse;
-    
+
+    [ObservableProperty] 
+    private NotifyTask<ObservableCollection<Group>> groups;
+
     [RelayCommand]
     private void OpenAddGroupDialog()
     {
@@ -78,14 +82,16 @@ public partial class CourseViewModel : UnitedEntityViewModel
         };
         
         var group = (Group) _dialogService.ShowDialog(
-            new GroupAddDialogView(), 
+            new GroupAddDialogView(),
             new GroupAddDialogViewModel(_courseService, _groupService, _teacherService),
-            dialogConfiguration)!;
+            dialogConfiguration, null!)!;
         
         GroupsByCourse = new NotifyTask<ObservableCollection<Group>>(GetGroupsByCourseAsync());
         
         GroupsViewModelByCourse =
             new NotifyTask<ObservableCollection<GroupViewModel>>(GetGroupsViewModelByCourseAsync());
+        
+        Groups = new NotifyTask<ObservableCollection<Group>>(GetGroupsAsync());
     }
     
     
@@ -108,34 +114,49 @@ public partial class CourseViewModel : UnitedEntityViewModel
         
         GroupsViewModelByCourse =
             new NotifyTask<ObservableCollection<GroupViewModel>>(GetGroupsViewModelByCourseAsync());
+        
+        Groups = new NotifyTask<ObservableCollection<Group>>(GetGroupsAsync());
     }
 
     [RelayCommand(CanExecute = nameof(CanOpenEditGroupDialogOrDeleteGroup))]
-    private void DeleteGroup(Group oldGroup)
+    private async Task DeleteGroup(Group oldGroup)
     {
-        if (oldGroup.Students.Count == 0)
+        var studentsGroup = await _groupService.GetGroupStudentsAsync(oldGroup.Id);
+        
+        if (studentsGroup.Count() != 0)
         {
             return;
         }
         
-        _groupService.DeleteAsync(oldGroup);
+        await _groupService.DeleteAsync(oldGroup);
         
         GroupsByCourse = new NotifyTask<ObservableCollection<Group>>(GetGroupsByCourseAsync());
         
         GroupsViewModelByCourse =
             new NotifyTask<ObservableCollection<GroupViewModel>>(GetGroupsViewModelByCourseAsync());
+        
+        Groups = new NotifyTask<ObservableCollection<Group>>(GetGroupsAsync());
     }
     
     private bool CanOpenEditGroupDialogOrDeleteGroup(Group? group)
     {
         return group is not null;
     }
+
+    private async Task<ObservableCollection<Group>> GetGroupsAsync()
+    {
+        var allGroups = await _groupService.GetAllAsync().ConfigureAwait(false);
+
+        var observeGroups = new ObservableCollection<Group>(allGroups);
+
+        return observeGroups;
+    }
     
     private async Task<ObservableCollection<GroupViewModel>> GetGroupsViewModelByCourseAsync()
     {
-        var groups = await _courseService.GetCourseGroupsAsync(Course.Id).ConfigureAwait(false);
+        var courseGroups = await _courseService.GetCourseGroupsAsync(Course.Id).ConfigureAwait(false);
         
-        var viewModels = groups.Select(group => 
+        var viewModels = courseGroups.Select(group => 
             new GroupViewModel(
                 _groupService, _studentService, _dialogService, _csvService, _pdfService, _configuration, group));
 
@@ -146,9 +167,9 @@ public partial class CourseViewModel : UnitedEntityViewModel
     
     private async Task<ObservableCollection<Group>> GetGroupsByCourseAsync()
     {
-        var groups = await _courseService.GetCourseGroupsAsync(Course.Id).ConfigureAwait(false);
+        var courseGroups = await _courseService.GetCourseGroupsAsync(Course.Id).ConfigureAwait(false);
 
-        var observeGroups = new ObservableCollection<Group>(groups);
+        var observeGroups = new ObservableCollection<Group>(courseGroups);
 
         return observeGroups;
     }
