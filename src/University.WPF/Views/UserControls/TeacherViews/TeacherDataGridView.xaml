@@ -5,9 +5,10 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:University.WPF.Views.UserControls"
              xmlns:vm="clr-namespace:University.WPF.ViewModels"
+             xmlns:teacherViewModels="clr-namespace:University.WPF.ViewModels.TeacherViewModels"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300"
-             d:DataContext="{d:DesignInstance Type=vm:TeacherViewModel}">
+             d:DataContext="{d:DesignInstance Type=teacherViewModels:TeacherViewModel}">
     
     <Grid>
         <Grid.ColumnDefinitions>
@@ -23,7 +24,7 @@
                    Text="{Binding Name}"/>
         
         <DataGrid Grid.Row="1"
-                  SelectedItem="{Binding SelectedItem}"
+                  SelectedItem="{Binding SelectedTeacher}"
                   ItemsSource="{Binding Collection, RelativeSource={RelativeSource AncestorType=UserControl}}"
                   AutoGenerateColumns="False"
                   CanUserAddRows="False"
@@ -62,15 +63,15 @@
                 <Button Content="Create" 
                         Width="Auto"
                         Margin="5"
-                        Command="{Binding OpenCreateStudentWindowCommand}"
+                        Command="{Binding OpenTeacherAddDialogCommand}"
                         Padding="2"/>
                 
                 <!-- Edit -->
                 <Button Content="Edit" 
                         Width="Auto"
                         Margin="5"
-                        Command="{Binding OpenEditStudentWindowCommand}"
-                        CommandParameter="{Binding SelectedItem}"
+                        Command="{Binding OpenTeacherEditDialogCommand}"
+                        CommandParameter="{Binding SelectedTeacher}"
                         Padding="2"/>
                 
                 <!-- Delete -->
@@ -78,7 +79,7 @@
                         Width="Auto"
                         Margin="5"
                         Command="{Binding DeleteStudentCommand}"
-                        CommandParameter="{Binding SelectedItem}"
+                        CommandParameter="{Binding SelectedTeacher}"
                         Padding="2"/>
 
             </StackPanel>

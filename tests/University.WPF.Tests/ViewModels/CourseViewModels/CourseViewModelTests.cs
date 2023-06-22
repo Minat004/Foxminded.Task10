@@ -1,5 +1,8 @@
 ﻿using System.Collections.ObjectModel;
+using System.Windows.Controls;
 using Castle.Core.Configuration;
+using CommunityToolkit.Mvvm.ComponentModel;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using University.WPF.Services;
 using University.WPF.ViewModels.GroupViewModels;
 using University.WPF.Views.UserControls.GroupViews;
@@ -25,16 +28,16 @@ public class CourseViewModelTests
             .ReturnsAsync(MockDataHelper.GetGroupsOfCourseById(It.IsAny<int>()));
 
         _mockGroupService = new Mock<IGroupService<Group>>();
+        // _mockGroupService
+        //     .Setup(x => x.GetGroupStudentsAsync(It.IsAny<int>()))
+        //     .ReturnsAsync(MockDataHelper.GetStudentsOfGroupById(It.IsAny<int>()));
+        
         _mockStudentService = new Mock<IStudentService<Student>>();
         _mockTeacherService = new Mock<ITeacherService<Teacher>>();
         
         _mockDialogService = new Mock<IDialogService>();
-        _mockDialogService
-            .Setup(x => x.ShowDialog(new GroupAddDialogView(),
-                new GroupAddDialogViewModel(_mockCourseService.Object, _mockGroupService.Object,
-                    _mockTeacherService.Object),
-                GetAddDialogConfiguration(), null!))
-            .Returns(GetAddGroup);
+        _mockDialogService.Setup(x => x.ShowDialog(It.IsAny<UserControl>(),
+                It.IsAny<ObservableObject>(), It.IsAny<IDialogConfiguration?>(), null!));
         
         _mockCsvService = new Mock<ICsvService>();
         _mockPdfService = new Mock<IPdfService>();
@@ -45,7 +48,7 @@ public class CourseViewModelTests
     {
         // Arrange
         var courseViewModel =
-            new CourseViewModel(GetCourse(), _mockCourseService.Object, _mockGroupService.Object,
+            new CourseViewModel(new Course(), _mockCourseService.Object, _mockGroupService.Object,
                 _mockStudentService.Object, _mockTeacherService.Object, _mockDialogService.Object,
                 _mockCsvService.Object, _mockPdfService.Object, MockDataHelper.GetConfig());
 
@@ -53,38 +56,49 @@ public class CourseViewModelTests
         courseViewModel.OpenAddGroupDialogCommand.Execute(null);
 
         // Assert
-        _mockDialogService.Verify(x => x.ShowDialog(new GroupAddDialogView(), 
-            new GroupAddDialogViewModel(_mockCourseService.Object, _mockGroupService.Object, _mockTeacherService.Object), 
-            GetAddDialogConfiguration(), null!), Times.Once);
+        _mockDialogService.Verify(x => x.ShowDialog(It.IsAny<UserControl>(), 
+            It.IsAny<ObservableObject>(), It.IsAny<IDialogConfiguration?>(), null!), Times.Once);
     }
 
-    private Course GetCourse()
+    [StaFact]
+    public void OpenEditGroupDialogCommandTest()
     {
-        return new Course
-        {
-            Id = 1,
-            Name = "Space Engineering",
-            Description = "Department of Space Engineering"
-        };
+        // Arrange
+        var courseViewModel =
+            new CourseViewModel(new Course(), _mockCourseService.Object, _mockGroupService.Object,
+                _mockStudentService.Object, _mockTeacherService.Object, _mockDialogService.Object,
+                _mockCsvService.Object, _mockPdfService.Object, MockDataHelper.GetConfig());
+        
+        // Act
+        courseViewModel.OpenEditGroupDialogCommand.Execute(null);
+        
+        // Assert
+        _mockDialogService.Verify(x => x.ShowDialog(It.IsAny<UserControl>(), 
+            It.IsAny<ObservableObject>(), It.IsAny<IDialogConfiguration?>(), null!), Times.Once);
+        
+        Assert.False(courseViewModel.OpenEditGroupDialogCommand.CanExecute(null));
     }
 
-    private Group GetAddGroup()
+    [Fact]
+    public void DeleteGroupCommandTest()
     {
-        return new Group()
-        {
-            Name = "add",
-            CourseId = 1,
-            TeacherId = 1,
-        };
-    }
-
-    private IDialogConfiguration GetAddDialogConfiguration()
-    {
-        return new DialogConfiguration()
-        {
-            Title = "Add Group",
-            Height = 250,
-            Width = 400
-        };
+        // Arrange
+        _mockGroupService
+            .Setup(x => x.GetGroupStudentsAsync(It.IsAny<int>()))
+            .ReturnsAsync(It.IsAny<IEnumerable<Student>>());
+        
+        var courseViewModel =
+            new CourseViewModel(new Course(), _mockCourseService.Object, _mockGroupService.Object,
+                _mockStudentService.Object, _mockTeacherService.Object, _mockDialogService.Object,
+                _mockCsvService.Object, _mockPdfService.Object, MockDataHelper.GetConfig());
+        
+        // Act
+        courseViewModel.DeleteGroupCommand.ExecuteAsync(null);
+        
+        // Assert
+        _mockGroupService.Verify(x => x.GetGroupStudentsAsync(It.IsAny<int>()));
+        _mockGroupService.Verify(x => x.DeleteAsync(It.IsAny<Group>()), Times.Never);
+        
+        Assert.False(courseViewModel.DeleteGroupCommand.CanExecute(null));
     }
 }

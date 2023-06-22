@@ -5,12 +5,14 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:vm="clr-namespace:University.WPF.ViewModels"
         xmlns:groupViewModels="clr-namespace:University.WPF.ViewModels.GroupViewModels"
+        xmlns:validation="clr-namespace:University.WPF.Validation"
         mc:Ignorable="d"
         FontSize="18"
         d:DesignHeight="250" d:DesignWidth="400"
         d:DataContext="{d:DesignInstance Type=groupViewModels:GroupEditDialogViewModel}">
     
-    <Grid ShowGridLines="True">
+    <Grid ShowGridLines="False"
+          Margin="5">
         
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
@@ -39,8 +41,15 @@
                    Grid.Column="0"
                    Text="Name"/>
         <TextBox Grid.Row="1"
-                 Grid.Column="1"
-                 Text="{Binding CurrentGroup.Name}"/>
+                 Grid.Column="1">
+            <TextBox.Text>
+                <Binding Path="CurrentGroup.Name" UpdateSourceTrigger="PropertyChanged">
+                    <Binding.ValidationRules>
+                        <validation:NameRule Max="10"/>
+                    </Binding.ValidationRules>
+                </Binding>
+            </TextBox.Text>
+        </TextBox>
         
         <!-- Course -->
         <TextBlock Grid.Row="2"

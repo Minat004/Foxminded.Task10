@@ -7,21 +7,25 @@ namespace University.Infrastructure.Repositories;
 
 public class TeacherRepository : ITeacherRepository<Teacher>
 {
-    private readonly UniversityDbContext _context;
+    private readonly IDbContextFactory<UniversityDbContext> _dbContextFactory;
 
-    public TeacherRepository(UniversityDbContext context)
+    public TeacherRepository(IDbContextFactory<UniversityDbContext> dbContextFactory)
     {
-        _context = context;
+        _dbContextFactory = dbContextFactory;
     }
 
     public async Task<IEnumerable<Teacher>> GetAllAsync()
     {
-        return await _context.Teachers.Include(x => x.Group).ToListAsync();
+        await using var context = await _dbContextFactory.CreateDbContextAsync();
+        
+        return await context.Teachers.Include(x => x.Group).ToListAsync();
     }
 
     public async Task UpdateAsync(Teacher teacher)
     {
-        var newTeacher = _context.Teachers.FirstOrDefault(x => x.Id == teacher.Id);
+        await using var context = await _dbContextFactory.CreateDbContextAsync();
+        
+        var newTeacher = context.Teachers.FirstOrDefault(x => x.Id == teacher.Id);
 
         if (newTeacher is null)
         {
@@ -31,19 +35,23 @@ public class TeacherRepository : ITeacherRepository<Teacher>
         newTeacher.FirstName = teacher.FirstName;
         newTeacher.LastName = teacher.LastName;
         
-        _context.Update(newTeacher);
-        await _context.SaveChangesAsync();
+        context.Update(newTeacher);
+        await context.SaveChangesAsync();
     }
 
     public async Task AddAsync(Teacher teacher)
     {
-        _context.Add(teacher);
-        await _context.SaveChangesAsync();
+        await using var context = await _dbContextFactory.CreateDbContextAsync();
+        
+        context.Add(teacher);
+        await context.SaveChangesAsync();
     }
 
     public async Task DeleteAsync(Teacher teacher)
     {
-        _context.Add(teacher);
-        await _context.SaveChangesAsync();
+        await using var context = await _dbContextFactory.CreateDbContextAsync();
+        
+        context.Remove(teacher);
+        await context.SaveChangesAsync();
     }
 }

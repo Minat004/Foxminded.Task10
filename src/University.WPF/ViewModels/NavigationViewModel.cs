@@ -68,7 +68,7 @@ public partial class NavigationViewModel : ObservableObject
             new GroupViewModel(_groupService, _studentService,
                 _dialogService, _csvService, _pdfService, _configuration, new Group { Id = 2, Name = items[2]}),
             
-            new TeacherViewModel(_teacherService, new Teacher {Id = 3, FirstName = items[3]})
+            new TeacherViewModels.TeacherViewModel(_teacherService, _dialogService, new Teacher {Id = 3, FirstName = items[3]})
         };
 
         return result;

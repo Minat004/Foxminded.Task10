@@ -4,23 +4,25 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:gview="clr-namespace:University.WPF.ViewModels.GroupViewModels"
+        xmlns:validation="clr-namespace:University.WPF.Validation"
         mc:Ignorable="d"
         FontSize="18"
         d:DesignHeight="250" d:DesignWidth="400"
         d:DataContext="{d:DesignInstance Type=gview:GroupAddDialogViewModel}">
     
-    <Grid ShowGridLines="True">
+    <Grid ShowGridLines="False"
+          Margin="5">
         
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"></ColumnDefinition>
-            <ColumnDefinition Width="3*"></ColumnDefinition>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="3*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"></RowDefinition>
-            <RowDefinition Height="Auto"></RowDefinition>
-            <RowDefinition Height="Auto"></RowDefinition>
-            <RowDefinition Height="Auto"></RowDefinition>
-            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         
         <!-- Name -->
@@ -28,8 +30,15 @@
                    Grid.Column="0"
                    Text="Name"/>
         <TextBox Grid.Row="0"
-                 Grid.Column="1"
-                 Text="{Binding GroupName}"/>
+                 Grid.Column="1">
+            <TextBox.Text>
+                <Binding Path="GroupName" UpdateSourceTrigger="PropertyChanged">
+                    <Binding.ValidationRules>
+                        <validation:NameRule Max="10"/>
+                    </Binding.ValidationRules>
+                </Binding>
+            </TextBox.Text>
+        </TextBox>
         
         <!-- Course -->
         <TextBlock Grid.Row="1"

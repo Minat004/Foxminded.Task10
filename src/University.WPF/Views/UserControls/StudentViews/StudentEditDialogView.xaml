@@ -6,12 +6,14 @@
              xmlns:local="clr-namespace:University.WPF.Views"
              xmlns:vm="clr-namespace:University.WPF.ViewModels"
              xmlns:studentViewModels="clr-namespace:University.WPF.ViewModels.StudentViewModels"
+             xmlns:validation="clr-namespace:University.WPF.Validation"
              mc:Ignorable="d"
              FontSize="18"
              d:DesignHeight="250" d:DesignWidth="400"
              d:DataContext="{d:DesignInstance Type=studentViewModels:StudentEditDialogViewModel}">
     
-    <Grid ShowGridLines="True">
+    <Grid ShowGridLines="False"
+          Margin="5">
         
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"></ColumnDefinition>
@@ -40,16 +42,30 @@
                    Grid.Column="0"
                    Text="First name"/>
         <TextBox Grid.Row="1"
-                 Grid.Column="1"
-                 Text="{Binding CurrentStudent.FirstName}"/>
+                 Grid.Column="1">
+            <TextBox.Text>
+                <Binding Path="CurrentStudent.FirstName" UpdateSourceTrigger="PropertyChanged">
+                    <Binding.ValidationRules>
+                        <validation:NameRule Max="50"/>
+                    </Binding.ValidationRules>
+                </Binding>
+            </TextBox.Text>
+        </TextBox>
         
         <!-- Last name -->
         <TextBlock Grid.Row="2"
                    Grid.Column="0"
                    Text="Last name"/>
         <TextBox Grid.Row="2"
-                 Grid.Column="1"
-                 Text="{Binding CurrentStudent.LastName}"/>
+                 Grid.Column="1">
+            <TextBox.Text>
+                <Binding Path="CurrentStudent.LastName" UpdateSourceTrigger="PropertyChanged">
+                    <Binding.ValidationRules>
+                        <validation:NameRule Max="50"/>
+                    </Binding.ValidationRules>
+                </Binding>
+            </TextBox.Text>
+        </TextBox>
         
         <!-- Group -->
         <TextBlock Grid.Row="3"
