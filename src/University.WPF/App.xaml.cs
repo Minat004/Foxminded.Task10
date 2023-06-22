@@ -32,7 +32,7 @@ public partial class App
                 services.AddDbContextFactory<UniversityDbContext>(options =>
                     options.UseSqlServer(hostContext.Configuration.GetConnectionString("UniversityConnection")));
 
-                services.AddSingleton<MainWindow>();
+                services.AddScoped<MainWindow>();
 
                 services.AddScoped<IDialogService, DialogService>();
                 services.AddScoped<ICourseService<Course>, CourseService>();

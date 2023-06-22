@@ -81,7 +81,7 @@ public partial class CourseViewModel : UnitedEntityViewModel
             Width = 400
         };
         
-        var group = (Group) _dialogService.ShowDialog(
+        var _ = (Group) _dialogService.ShowDialog(
             new GroupAddDialogView(),
             new GroupAddDialogViewModel(_courseService, _groupService, _teacherService),
             dialogConfiguration, null!)!;
@@ -105,7 +105,7 @@ public partial class CourseViewModel : UnitedEntityViewModel
             Width = 400
         };
         
-        var group = (Group) _dialogService.ShowDialog(
+        var _ = (Group) _dialogService.ShowDialog(
             new GroupEditDialogView(), 
             new GroupEditDialogViewModel(_groupService),
             dialogConfiguration, oldGroup)!;
