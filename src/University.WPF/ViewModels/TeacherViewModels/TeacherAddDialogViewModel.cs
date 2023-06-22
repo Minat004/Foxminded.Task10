@@ -1,6 +1,5 @@
 ﻿using System;
-using System.Collections.ObjectModel;
-using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using University.Core.Interfaces;
@@ -8,7 +7,7 @@ using University.Core.Models;
 
 namespace University.WPF.ViewModels.TeacherViewModels;
 
-public partial class TeacherAddDialogViewModel : ObservableObject, IResultHolder, IClosable
+public partial class TeacherAddDialogViewModel : ObservableValidator, IResultHolder, IClosable
 {
     private readonly ITeacherService<Teacher> _teacherService;
 
@@ -22,12 +21,22 @@ public partial class TeacherAddDialogViewModel : ObservableObject, IResultHolder
     public Action? FinishInterAction { get; set; }
 
     [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(CreateTeacherCommand))]
+    [NotifyDataErrorInfo]
+    [Required]
+    [MaxLength(50)]
+    [RegularExpression(@"^[\p{L}\p{Mn}]+$", ErrorMessage = "The field must have letters only.")]
     private string? teacherFirstName;
 
     [ObservableProperty] 
+    [NotifyCanExecuteChangedFor(nameof(CreateTeacherCommand))]
+    [NotifyDataErrorInfo]
+    [Required]
+    [MaxLength(50)]
+    [RegularExpression(@"^[\p{L}\p{Mn}]+$", ErrorMessage = "The field must have letters only.")]
     private string? teacherLastName;
     
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(CanCreate))]
     private void CreateTeacher()
     {
         var teacher = new Teacher
@@ -45,5 +54,15 @@ public partial class TeacherAddDialogViewModel : ObservableObject, IResultHolder
     private void Cancel()
     {
         FinishInterAction!();
+    }
+    
+    private bool CanCreate()
+    {
+        if (string.IsNullOrEmpty(TeacherFirstName) || string.IsNullOrEmpty(TeacherLastName))
+        {
+            return false;
+        }
+
+        return !HasErrors;
     }
 }

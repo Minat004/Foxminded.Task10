@@ -31,15 +31,9 @@
                    Grid.Column="0"
                    Text="First name"/>
         <TextBox Grid.Row="0"
-                 Grid.Column="1">
-            <TextBox.Text>
-                <Binding Path="TeacherFirstName" UpdateSourceTrigger="PropertyChanged">
-                    <Binding.ValidationRules>
-                        <validationRules:NameRule Max="50"
-                                                  TextOnly="True"/>
-                    </Binding.ValidationRules>
-                </Binding>
-            </TextBox.Text>
+                 Grid.Column="1"
+                 Text="{Binding TeacherFirstName, UpdateSourceTrigger=PropertyChanged,
+                 ValidatesOnDataErrors=True}">
         </TextBox>
         
         <!-- Last name -->
@@ -47,15 +41,9 @@
                    Grid.Column="0"
                    Text="Last name"/>
         <TextBox Grid.Row="1"
-                 Grid.Column="1">
-            <TextBox.Text>
-                <Binding Path="TeacherLastName" UpdateSourceTrigger="PropertyChanged">
-                    <Binding.ValidationRules>
-                        <validationRules:NameRule Max="50"
-                                                  TextOnly="True"/>
-                    </Binding.ValidationRules>
-                </Binding>
-            </TextBox.Text>
+                 Grid.Column="1"
+                 Text="{Binding TeacherLastName, UpdateSourceTrigger=PropertyChanged,
+                 ValidatesOnDataErrors=True}">
         </TextBox>
         
         <StackPanel Grid.Row="2"

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using University.Core.Interfaces;
@@ -6,7 +7,7 @@ using University.Core.Models;
 
 namespace University.WPF.ViewModels.TeacherViewModels;
 
-public partial class TeacherEditDialogViewModel : ObservableObject, IDataHolder, IResultHolder, IClosable
+public partial class TeacherEditDialogViewModel : ObservableValidator, IDataHolder, IResultHolder, IClosable
 {
     private readonly ITeacherService<Teacher> _teacherService;
 
@@ -32,8 +33,34 @@ public partial class TeacherEditDialogViewModel : ObservableObject, IDataHolder,
 
     [ObservableProperty] 
     private Teacher? currentTeacher;
-    
-    [RelayCommand]
+
+    [ObservableProperty] 
+    [NotifyCanExecuteChangedFor(nameof(EditTeacherCommand))]
+    [NotifyDataErrorInfo]
+    [Required]
+    [MaxLength(50)]
+    [RegularExpression(@"^[\p{L}\p{Mn}]+$", ErrorMessage = "The field must have letters only.")]
+    private string? currentTeacherFirstName;
+
+    partial void OnCurrentTeacherFirstNameChanged(string? value)
+    {
+        CurrentTeacher!.FirstName = value!;
+    }
+
+    [ObservableProperty] 
+    [NotifyCanExecuteChangedFor(nameof(EditTeacherCommand))]
+    [NotifyDataErrorInfo]
+    [Required]
+    [MaxLength(50)]
+    [RegularExpression(@"^[\p{L}\p{Mn}]+$", ErrorMessage = "The field must have letters only.")]
+    private string? currentTeacherLastName;
+
+    partial void OnCurrentTeacherLastNameChanged(string? value)
+    {
+        CurrentTeacher!.LastName = value!;
+    }
+
+    [RelayCommand(CanExecute = nameof(CanEdit))]
     private void EditTeacher()
     {
         _teacherService.UpdateAsync(CurrentTeacher!);
@@ -45,5 +72,15 @@ public partial class TeacherEditDialogViewModel : ObservableObject, IDataHolder,
     private void Cancel()
     {
         FinishInterAction!();
+    }
+    
+    private bool CanEdit()
+    {
+        if (string.IsNullOrEmpty(CurrentTeacher!.FirstName) || string.IsNullOrEmpty(CurrentTeacher.LastName))
+        {
+            return false;
+        }
+
+        return !HasErrors;
     }
 }

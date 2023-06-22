@@ -3,9 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:vm="clr-namespace:University.WPF.ViewModels"
         xmlns:groupViewModels="clr-namespace:University.WPF.ViewModels.GroupViewModels"
-        xmlns:validationRules="clr-namespace:University.WPF.ValidationRules"
         mc:Ignorable="d"
         FontSize="18"
         d:DesignHeight="250" d:DesignWidth="400"
@@ -41,14 +39,8 @@
                    Grid.Column="0"
                    Text="Name"/>
         <TextBox Grid.Row="1"
-                 Grid.Column="1">
-            <TextBox.Text>
-                <Binding Path="CurrentGroup.Name" UpdateSourceTrigger="PropertyChanged">
-                    <Binding.ValidationRules>
-                        <validationRules:NameRule Max="10"/>
-                    </Binding.ValidationRules>
-                </Binding>
-            </TextBox.Text>
+                 Grid.Column="1"
+                 Text="{Binding CurrentGroupName, UpdateSourceTrigger=PropertyChanged}">
         </TextBox>
         
         <!-- Course -->

@@ -16,16 +16,16 @@
           Margin="5">
         
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"></ColumnDefinition>
-            <ColumnDefinition Width="3*"></ColumnDefinition>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="3*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"></RowDefinition>
-            <RowDefinition Height="Auto"></RowDefinition>
-            <RowDefinition Height="Auto"></RowDefinition>
-            <RowDefinition Height="Auto"></RowDefinition>
-            <RowDefinition Height="Auto"></RowDefinition>
-            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         
         <!-- Id -->
@@ -42,15 +42,8 @@
                    Grid.Column="0"
                    Text="First name"/>
         <TextBox Grid.Row="1"
-                 Grid.Column="1">
-            <TextBox.Text>
-                <Binding Path="CurrentStudent.FirstName" UpdateSourceTrigger="PropertyChanged">
-                    <Binding.ValidationRules>
-                        <validationRules:NameRule Max="50"
-                                                  TextOnly="True"/>
-                    </Binding.ValidationRules>
-                </Binding>
-            </TextBox.Text>
+                 Grid.Column="1"
+                 Text="{Binding CurrentStudentFirstName, UpdateSourceTrigger=PropertyChanged}">
         </TextBox>
         
         <!-- Last name -->
@@ -58,15 +51,8 @@
                    Grid.Column="0"
                    Text="Last name"/>
         <TextBox Grid.Row="2"
-                 Grid.Column="1">
-            <TextBox.Text>
-                <Binding Path="CurrentStudent.LastName" UpdateSourceTrigger="PropertyChanged">
-                    <Binding.ValidationRules>
-                        <validationRules:NameRule Max="50"
-                                                  TextOnly="True"/>
-                    </Binding.ValidationRules>
-                </Binding>
-            </TextBox.Text>
+                 Grid.Column="1"
+                 Text="{Binding CurrentStudentLastName, UpdateSourceTrigger=PropertyChanged}">
         </TextBox>
         
         <!-- Group -->

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using University.Core.Interfaces;
@@ -6,7 +7,7 @@ using University.Core.Models;
 
 namespace University.WPF.ViewModels.GroupViewModels;
 
-public partial class GroupEditDialogViewModel : ObservableObject, IDataHolder, IResultHolder, IClosable
+public partial class GroupEditDialogViewModel : ObservableValidator, IDataHolder, IResultHolder, IClosable
 {
     private readonly IGroupService<Group> _groupService;
 
@@ -27,6 +28,7 @@ public partial class GroupEditDialogViewModel : ObservableObject, IDataHolder, I
         {
             _data = value;
             CurrentGroup = (Group)value!;
+            CurrentGroupName = CurrentGroup.Name;
             TeacherFullName = $"{CurrentGroup.Teacher!.FirstName} {CurrentGroup.Teacher.LastName}";
         }
     }
@@ -35,9 +37,16 @@ public partial class GroupEditDialogViewModel : ObservableObject, IDataHolder, I
     private Group? currentGroup;
 
     [ObservableProperty] 
+    [NotifyCanExecuteChangedFor(nameof(EditGroupCommand))]
+    [NotifyDataErrorInfo]
+    [Required]
+    [MaxLength(10)]
+    private string? currentGroupName;
+
+    [ObservableProperty] 
     private string? teacherFullName;
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(CanEdit))]
     private void EditGroup()
     {
         _groupService.UpdateAsync(CurrentGroup!);
@@ -51,5 +60,15 @@ public partial class GroupEditDialogViewModel : ObservableObject, IDataHolder, I
     private void Cancel()
     {
         FinishInterAction!();
+    }
+    
+    private bool CanEdit()
+    {
+        if (string.IsNullOrEmpty(CurrentGroupName))
+        {
+            return false;
+        }
+
+        return !HasErrors;
     }
 }

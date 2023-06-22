@@ -32,15 +32,8 @@
                    Grid.Column="0"
                    Text="First name"/>
         <TextBox Grid.Row="0"
-                 Grid.Column="1">
-            <TextBox.Text>
-                <Binding Path="StudentFirstName" UpdateSourceTrigger="PropertyChanged">
-                    <Binding.ValidationRules>
-                        <validationRules:NameRule Max="50"
-                                                  TextOnly="True"/>
-                    </Binding.ValidationRules>
-                </Binding>
-            </TextBox.Text>
+                 Grid.Column="1"
+                 Text="{Binding StudentFirstName, UpdateSourceTrigger=PropertyChanged}">
         </TextBox>
         
         <!-- Last name -->
@@ -48,15 +41,8 @@
                    Grid.Column="0"
                    Text="Last name"/>
         <TextBox Grid.Row="1"
-                 Grid.Column="1">
-            <TextBox.Text>
-                <Binding Path="StudentLastName" UpdateSourceTrigger="PropertyChanged">
-                    <Binding.ValidationRules>
-                        <validationRules:NameRule Max="50"
-                                                  TextOnly="True"/>
-                    </Binding.ValidationRules>
-                </Binding>
-            </TextBox.Text>
+                 Grid.Column="1"
+                 Text="{Binding StudentLastName, UpdateSourceTrigger=PropertyChanged}">
         </TextBox>
         
         <!-- Group -->

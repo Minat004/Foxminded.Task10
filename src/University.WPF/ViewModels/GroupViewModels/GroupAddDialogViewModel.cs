@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -8,7 +9,7 @@ using University.Core.Models;
 
 namespace University.WPF.ViewModels.GroupViewModels;
 
-public partial class GroupAddDialogViewModel : ObservableObject, IResultHolder, IClosable
+public partial class GroupAddDialogViewModel : ObservableValidator, IResultHolder, IClosable
 {
     private readonly ICourseService<Course> _courseService;
     private readonly IGroupService<Group> _groupService;
@@ -26,10 +27,6 @@ public partial class GroupAddDialogViewModel : ObservableObject, IResultHolder, 
         Courses = new NotifyTask<ObservableCollection<Course>>(GetCoursesAsync());
 
         Teachers = new NotifyTask<ObservableCollection<Teacher>>(GetTeachersAsync());
-
-        // SelectedCourse = Courses.Result[0];
-
-        // SelectedTeacher = Teachers.Result[0];
     }
 
     public object? Result { get; private set; }
@@ -37,21 +34,27 @@ public partial class GroupAddDialogViewModel : ObservableObject, IResultHolder, 
     public Action? FinishInterAction { get; set; }
 
     [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(CreateGroupCommand))]
+    [NotifyDataErrorInfo]
+    [Required]
+    [MaxLength(10)]
     private string? groupName;
 
     [ObservableProperty] 
+    [NotifyCanExecuteChangedFor(nameof(CreateGroupCommand))]
     private Course? selectedCourse;
 
     [ObservableProperty] 
+    [NotifyCanExecuteChangedFor(nameof(CreateGroupCommand))]
     private Teacher? selectedTeacher;
 
-    [ObservableProperty]
+    [ObservableProperty] 
     private NotifyTask<ObservableCollection<Course>> courses;
 
-    [ObservableProperty]
+    [ObservableProperty] 
     private NotifyTask<ObservableCollection<Teacher>> teachers;
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(CanCreate))]
     private void CreateGroup()
     {
         var group = new Group
@@ -74,10 +77,20 @@ public partial class GroupAddDialogViewModel : ObservableObject, IResultHolder, 
         FinishInterAction!();
     }
 
+    private bool CanCreate()
+    {
+        if (string.IsNullOrEmpty(GroupName) || SelectedCourse is null || SelectedTeacher is null)
+        {
+            return false;
+        }
+
+        return !HasErrors;
+    }
+
     private async Task<ObservableCollection<Course>> GetCoursesAsync()
     {
         var courses = await _courseService.GetAllAsync().ConfigureAwait(false);
-        
+
         var observeCourses = new ObservableCollection<Course>(courses);
 
         return observeCourses;

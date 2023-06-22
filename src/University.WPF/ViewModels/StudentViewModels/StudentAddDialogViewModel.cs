@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -8,7 +9,7 @@ using University.Core.Models;
 
 namespace University.WPF.ViewModels.StudentViewModels;
 
-public partial class StudentAddDialogViewModel : ObservableObject, IResultHolder, IClosable
+public partial class StudentAddDialogViewModel : ObservableValidator, IResultHolder, IClosable
 {
     private readonly IGroupService<Group> _groupService;
     private readonly IStudentService<Student> _studentService;
@@ -28,21 +29,32 @@ public partial class StudentAddDialogViewModel : ObservableObject, IResultHolder
     public Action? FinishInterAction { get; set; }
 
     [ObservableProperty] 
+    [NotifyCanExecuteChangedFor(nameof(CreateStudentCommand))]
+    [NotifyDataErrorInfo]
+    [Required]
+    [MaxLength(50)]
+    [RegularExpression(@"^[\p{L}\p{Mn}]+$", ErrorMessage = "The field must have letters only.")]
     private string? studentFirstName;
     
     [ObservableProperty] 
+    [NotifyCanExecuteChangedFor(nameof(CreateStudentCommand))]
+    [NotifyDataErrorInfo]
+    [Required]
+    [MaxLength(50)]
+    [RegularExpression(@"^[\p{L}\p{Mn}]+$", ErrorMessage = "The field must have letters only.")]
     private string? studentLastName;
 
     [ObservableProperty] 
+    [NotifyCanExecuteChangedFor(nameof(CreateStudentCommand))]
     private Group? selectedGroup;
 
     [ObservableProperty] 
     private NotifyTask<ObservableCollection<Group>> groups;
     
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(CanCreate))]
     private void CreateStudent()
     {
-        var student = new Student()
+        var student = new Student
         {
             FirstName = StudentFirstName!,
             LastName = StudentLastName!,
@@ -58,6 +70,16 @@ public partial class StudentAddDialogViewModel : ObservableObject, IResultHolder
     private void Cancel()
     {
         FinishInterAction!();
+    }
+    
+    private bool CanCreate()
+    {
+        if (string.IsNullOrEmpty(StudentFirstName) || string.IsNullOrEmpty(StudentLastName) || SelectedGroup is null)
+        {
+            return false;
+        }
+
+        return !HasErrors;
     }
 
     private async Task<ObservableCollection<Group>> GetGroupsAsync()
