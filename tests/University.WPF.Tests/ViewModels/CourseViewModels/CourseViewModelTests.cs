@@ -1,11 +1,5 @@
-﻿using System.Collections.ObjectModel;
-using System.Windows.Controls;
-using Castle.Core.Configuration;
+﻿using System.Windows.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using University.WPF.Services;
-using University.WPF.ViewModels.GroupViewModels;
-using University.WPF.Views.UserControls.GroupViews;
 
 namespace University.WPF.Tests.ViewModels.CourseViewModels;
 
@@ -28,9 +22,6 @@ public class CourseViewModelTests
             .ReturnsAsync(MockDataHelper.GetGroupsOfCourseById(It.IsAny<int>()));
 
         _mockGroupService = new Mock<IGroupService<Group>>();
-        // _mockGroupService
-        //     .Setup(x => x.GetGroupStudentsAsync(It.IsAny<int>()))
-        //     .ReturnsAsync(MockDataHelper.GetStudentsOfGroupById(It.IsAny<int>()));
         
         _mockStudentService = new Mock<IStudentService<Student>>();
         _mockTeacherService = new Mock<ITeacherService<Teacher>>();
