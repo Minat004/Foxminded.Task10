@@ -5,7 +5,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:vm="clr-namespace:University.WPF.ViewModels"
         xmlns:groupViewModels="clr-namespace:University.WPF.ViewModels.GroupViewModels"
-        xmlns:validation="clr-namespace:University.WPF.Validation"
+        xmlns:validationRules="clr-namespace:University.WPF.ValidationRules"
         mc:Ignorable="d"
         FontSize="18"
         d:DesignHeight="250" d:DesignWidth="400"
@@ -45,7 +45,7 @@
             <TextBox.Text>
                 <Binding Path="CurrentGroup.Name" UpdateSourceTrigger="PropertyChanged">
                     <Binding.ValidationRules>
-                        <validation:NameRule Max="10"/>
+                        <validationRules:NameRule Max="10"/>
                     </Binding.ValidationRules>
                 </Binding>
             </TextBox.Text>

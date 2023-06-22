@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:University.WPF.Views.UserControls.TeacherViews"
              xmlns:tvm="clr-namespace:University.WPF.ViewModels.TeacherViewModels"
-             xmlns:validation="clr-namespace:University.WPF.Validation"
+             xmlns:validationRules="clr-namespace:University.WPF.ValidationRules"
              mc:Ignorable="d"
              FontSize="18"
              d:DesignHeight="300" d:DesignWidth="300"
@@ -34,7 +34,8 @@
             <TextBox.Text>
                 <Binding Path="CurrentTeacher.FirstName" UpdateSourceTrigger="PropertyChanged">
                     <Binding.ValidationRules>
-                        <validation:NameRule Max="50"/>
+                        <validationRules:NameRule Max="50"
+                                                  TextOnly="True"/>
                     </Binding.ValidationRules>
                 </Binding>
             </TextBox.Text>
@@ -49,7 +50,8 @@
             <TextBox.Text>
                 <Binding Path="CurrentTeacher.LastName" UpdateSourceTrigger="PropertyChanged">
                     <Binding.ValidationRules>
-                        <validation:NameRule Max="50"/>
+                        <validationRules:NameRule Max="50"
+                                                  TextOnly="True"/>
                     </Binding.ValidationRules>
                 </Binding>
             </TextBox.Text>

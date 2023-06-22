@@ -4,9 +4,9 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:University.WPF.Views.UserControls.TeacherViews"
-             xmlns:validation="clr-namespace:University.WPF.Validation"
              xmlns:studentViewModels="clr-namespace:University.WPF.ViewModels.StudentViewModels"
              xmlns:tvm="clr-namespace:University.WPF.ViewModels.TeacherViewModels"
+             xmlns:validationRules="clr-namespace:University.WPF.ValidationRules"
              mc:Ignorable="d"
              FontSize="18"
              d:DesignHeight="250" d:DesignWidth="500"
@@ -35,7 +35,8 @@
             <TextBox.Text>
                 <Binding Path="TeacherFirstName" UpdateSourceTrigger="PropertyChanged">
                     <Binding.ValidationRules>
-                        <validation:NameRule Max="50"/>
+                        <validationRules:NameRule Max="50"
+                                                  TextOnly="True"/>
                     </Binding.ValidationRules>
                 </Binding>
             </TextBox.Text>
@@ -50,7 +51,8 @@
             <TextBox.Text>
                 <Binding Path="TeacherLastName" UpdateSourceTrigger="PropertyChanged">
                     <Binding.ValidationRules>
-                        <validation:NameRule Max="50"/>
+                        <validationRules:NameRule Max="50"
+                                                  TextOnly="True"/>
                     </Binding.ValidationRules>
                 </Binding>
             </TextBox.Text>

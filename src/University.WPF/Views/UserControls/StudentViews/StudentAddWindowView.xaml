@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:University.WPF.Views"
              xmlns:vm="clr-namespace:University.WPF.ViewModels"
              xmlns:studentViewModels="clr-namespace:University.WPF.ViewModels.StudentViewModels"
-             xmlns:validation="clr-namespace:University.WPF.Validation"
+             xmlns:validationRules="clr-namespace:University.WPF.ValidationRules"
              mc:Ignorable="d"
              FontSize="18"
              d:DesignHeight="250" d:DesignWidth="400"
@@ -36,7 +36,8 @@
             <TextBox.Text>
                 <Binding Path="StudentFirstName" UpdateSourceTrigger="PropertyChanged">
                     <Binding.ValidationRules>
-                        <validation:NameRule Max="50"/>
+                        <validationRules:NameRule Max="50"
+                                                  TextOnly="True"/>
                     </Binding.ValidationRules>
                 </Binding>
             </TextBox.Text>
@@ -51,7 +52,8 @@
             <TextBox.Text>
                 <Binding Path="StudentLastName" UpdateSourceTrigger="PropertyChanged">
                     <Binding.ValidationRules>
-                        <validation:NameRule Max="50"/>
+                        <validationRules:NameRule Max="50"
+                                                  TextOnly="True"/>
                     </Binding.ValidationRules>
                 </Binding>
             </TextBox.Text>
