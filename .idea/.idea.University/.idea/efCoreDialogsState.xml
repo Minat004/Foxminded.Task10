@@ -3,12 +3,13 @@
   <component name="EfCoreDialogsState">
     <option name="keyValueStorage">
       <map>
+        <entry key="Common:401684cb-853d-42b0-a42d-4fffeb949de1:dbContext" value="University.Infrastructure.Data.UniversityDbContext" />
         <entry key="Common:buildConfiguration" value="Debug" />
         <entry key="Common:dbContextFolder" value="Data" />
         <entry key="Common:dbContextName" value="UniversityDbContext" />
         <entry key="Common:generateOnConfiguring" value="false" />
         <entry key="Common:noBuild" value="true" />
-        <entry key="Common:outputFolder" value="..\University.Core\Models" />
+        <entry key="Common:outputFolder" value="Data\Migrations" />
         <entry key="Common:provider" value="Microsoft.EntityFrameworkCore.SqlServer" />
         <entry key="Common:useAttributes" value="false" />
         <entry key="Common:useDatabaseNames" value="false" />
