@@ -52,7 +52,6 @@ public partial class App
                 
                 // ViewModels
                 services.AddTransient<MainWindowViewModel>();
-                services.AddTransient<CourseViewModel>();
                 services.AddTransient<NavigationViewModel>();
             })
             .Build();

@@ -104,6 +104,8 @@ public partial class UniversityDbContext : DbContext
                 .IsUnicode(false)
                 .HasColumnName("LAST_NAME");
         });
+        
+        modelBuilder.Seed();
 
         OnModelCreatingPartial(modelBuilder);
     }

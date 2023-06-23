@@ -48,6 +48,38 @@ namespace University.Infrastructure.Data.Migrations
                         .HasName("PK__COURSES__3214EC27CCBD0248");
 
                     b.ToTable("COURSES", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Description = "Department of Space Engineering",
+                            Name = "Space Engineering"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Description = "Department of Aircraft Control Systems",
+                            Name = "Aircraft"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Description = "Faculty of Chemical Engineering",
+                            Name = "Chemical Engineering"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Description = "Department of Machine Design",
+                            Name = "Machine Design"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Description = "Electronic Engineering Department",
+                            Name = "Engineering Department"
+                        });
                 });
 
             modelBuilder.Entity("University.Core.Models.Group", b =>
@@ -84,6 +116,113 @@ namespace University.Infrastructure.Data.Migrations
                         .HasFilter("[TEACHER_ID] IS NOT NULL");
 
                     b.ToTable("GROUPS", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CourseId = 1,
+                            Name = "SE-01",
+                            TeacherId = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CourseId = 1,
+                            Name = "SE-02",
+                            TeacherId = 2
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CourseId = 1,
+                            Name = "SE-03",
+                            TeacherId = 3
+                        },
+                        new
+                        {
+                            Id = 4,
+                            CourseId = 2,
+                            Name = "AC-01",
+                            TeacherId = 4
+                        },
+                        new
+                        {
+                            Id = 5,
+                            CourseId = 2,
+                            Name = "AC-02",
+                            TeacherId = 5
+                        },
+                        new
+                        {
+                            Id = 6,
+                            CourseId = 2,
+                            Name = "AC-03",
+                            TeacherId = 6
+                        },
+                        new
+                        {
+                            Id = 7,
+                            CourseId = 3,
+                            Name = "CE-01",
+                            TeacherId = 7
+                        },
+                        new
+                        {
+                            Id = 8,
+                            CourseId = 3,
+                            Name = "CE-02",
+                            TeacherId = 8
+                        },
+                        new
+                        {
+                            Id = 9,
+                            CourseId = 3,
+                            Name = "CE-03",
+                            TeacherId = 9
+                        },
+                        new
+                        {
+                            Id = 10,
+                            CourseId = 5,
+                            Name = "SR-01",
+                            TeacherId = 10
+                        },
+                        new
+                        {
+                            Id = 11,
+                            CourseId = 5,
+                            Name = "SR-02",
+                            TeacherId = 11
+                        },
+                        new
+                        {
+                            Id = 12,
+                            CourseId = 5,
+                            Name = "SR-03",
+                            TeacherId = 12
+                        },
+                        new
+                        {
+                            Id = 13,
+                            CourseId = 4,
+                            Name = "DC-01",
+                            TeacherId = 13
+                        },
+                        new
+                        {
+                            Id = 14,
+                            CourseId = 4,
+                            Name = "DC-02",
+                            TeacherId = 14
+                        },
+                        new
+                        {
+                            Id = 15,
+                            CourseId = 4,
+                            Name = "DC-03",
+                            TeacherId = 15
+                        });
                 });
 
             modelBuilder.Entity("University.Core.Models.Student", b =>
@@ -119,6 +258,302 @@ namespace University.Infrastructure.Data.Migrations
                     b.HasIndex("GroupId");
 
                     b.ToTable("STUDENTS", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            FirstName = "Tony",
+                            GroupId = 1,
+                            LastName = "Stark"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            FirstName = "Hank",
+                            GroupId = 1,
+                            LastName = "Pym"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            FirstName = "Janet",
+                            GroupId = 1,
+                            LastName = "Pym"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            FirstName = "Bruce",
+                            GroupId = 1,
+                            LastName = "Banner"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            FirstName = "Thor",
+                            GroupId = 1,
+                            LastName = "Odinson"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            FirstName = "Rick",
+                            GroupId = 1,
+                            LastName = "Jones"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            FirstName = "Steven",
+                            GroupId = 2,
+                            LastName = "Rogers"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            FirstName = "Francis",
+                            GroupId = 2,
+                            LastName = "Barton"
+                        },
+                        new
+                        {
+                            Id = 9,
+                            FirstName = "Pietro",
+                            GroupId = 2,
+                            LastName = "Maximoff"
+                        },
+                        new
+                        {
+                            Id = 10,
+                            FirstName = "Wanda",
+                            GroupId = 2,
+                            LastName = "Maximoff"
+                        },
+                        new
+                        {
+                            Id = 11,
+                            FirstName = "Harry",
+                            GroupId = 2,
+                            LastName = "Walters"
+                        },
+                        new
+                        {
+                            Id = 12,
+                            FirstName = "Cleese",
+                            GroupId = 2,
+                            LastName = "Rambeau"
+                        },
+                        new
+                        {
+                            Id = 13,
+                            FirstName = "Victor",
+                            GroupId = 2,
+                            LastName = "Shade"
+                        },
+                        new
+                        {
+                            Id = 14,
+                            FirstName = "Dane",
+                            GroupId = 2,
+                            LastName = "Whitman"
+                        },
+                        new
+                        {
+                            Id = 15,
+                            FirstName = "Natasha",
+                            GroupId = 3,
+                            LastName = "Romanoff"
+                        },
+                        new
+                        {
+                            Id = 16,
+                            FirstName = "Henry",
+                            GroupId = 3,
+                            LastName = "McCoy"
+                        },
+                        new
+                        {
+                            Id = 17,
+                            FirstName = "Marc",
+                            GroupId = 3,
+                            LastName = "Spector"
+                        },
+                        new
+                        {
+                            Id = 18,
+                            FirstName = "Heather",
+                            GroupId = 3,
+                            LastName = "Douglas"
+                        },
+                        new
+                        {
+                            Id = 19,
+                            FirstName = "Patsy",
+                            GroupId = 3,
+                            LastName = "Walker"
+                        },
+                        new
+                        {
+                            Id = 20,
+                            FirstName = "Matthew",
+                            GroupId = 3,
+                            LastName = "Liebowitz"
+                        },
+                        new
+                        {
+                            Id = 21,
+                            FirstName = "Patsy",
+                            GroupId = 3,
+                            LastName = "Walker"
+                        },
+                        new
+                        {
+                            Id = 22,
+                            FirstName = "Simon",
+                            GroupId = 3,
+                            LastName = "Williams"
+                        },
+                        new
+                        {
+                            Id = 23,
+                            FirstName = "Aleta",
+                            GroupId = 4,
+                            LastName = "Ogord"
+                        },
+                        new
+                        {
+                            Id = 24,
+                            FirstName = "Martinex",
+                            GroupId = 4,
+                            LastName = "T'Naga"
+                        },
+                        new
+                        {
+                            Id = 25,
+                            FirstName = "Nicholette",
+                            GroupId = 4,
+                            LastName = "Gold"
+                        },
+                        new
+                        {
+                            Id = 26,
+                            FirstName = "Vance",
+                            GroupId = 4,
+                            LastName = "Astrovik"
+                        },
+                        new
+                        {
+                            Id = 27,
+                            FirstName = "Yondu",
+                            GroupId = 5,
+                            LastName = "Udonta"
+                        },
+                        new
+                        {
+                            Id = 28,
+                            FirstName = "Mar",
+                            GroupId = 5,
+                            LastName = "Vell"
+                        },
+                        new
+                        {
+                            Id = 29,
+                            FirstName = "Carol",
+                            GroupId = 5,
+                            LastName = "Danvers"
+                        },
+                        new
+                        {
+                            Id = 30,
+                            FirstName = "Samuel",
+                            GroupId = 5,
+                            LastName = "Wilson"
+                        },
+                        new
+                        {
+                            Id = 31,
+                            FirstName = "Jennifer",
+                            GroupId = 13,
+                            LastName = "Walters"
+                        },
+                        new
+                        {
+                            Id = 32,
+                            FirstName = "Monica",
+                            GroupId = 13,
+                            LastName = "Rambeau"
+                        },
+                        new
+                        {
+                            Id = 33,
+                            FirstName = "James",
+                            GroupId = 13,
+                            LastName = "Rhodes"
+                        },
+                        new
+                        {
+                            Id = 34,
+                            FirstName = "Barbara",
+                            GroupId = 13,
+                            LastName = "Barton"
+                        },
+                        new
+                        {
+                            Id = 35,
+                            FirstName = "Moira",
+                            GroupId = 6,
+                            LastName = "Brandon"
+                        },
+                        new
+                        {
+                            Id = 36,
+                            FirstName = "Bonita",
+                            GroupId = 6,
+                            LastName = "Juarez"
+                        },
+                        new
+                        {
+                            Id = 37,
+                            FirstName = "Marc",
+                            GroupId = 6,
+                            LastName = "Spector"
+                        },
+                        new
+                        {
+                            Id = 38,
+                            FirstName = "John",
+                            GroupId = 6,
+                            LastName = "Walker"
+                        },
+                        new
+                        {
+                            Id = 39,
+                            FirstName = "Jim",
+                            GroupId = 10,
+                            LastName = "Hammond"
+                        },
+                        new
+                        {
+                            Id = 40,
+                            FirstName = "Miguel",
+                            GroupId = 10,
+                            LastName = "Santos"
+                        },
+                        new
+                        {
+                            Id = 41,
+                            FirstName = "Julia",
+                            GroupId = 10,
+                            LastName = "Carpenter"
+                        },
+                        new
+                        {
+                            Id = 42,
+                            FirstName = "Christopher",
+                            GroupId = 10,
+                            LastName = "Powell"
+                        });
                 });
 
             modelBuilder.Entity("University.Core.Models.Teacher", b =>
@@ -148,6 +583,98 @@ namespace University.Infrastructure.Data.Migrations
                         .HasName("PK__TEACHERS__3214EC2798CA96E2");
 
                     b.ToTable("TEACHERS", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            FirstName = "Alain",
+                            LastName = "Aspect"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            FirstName = "John",
+                            LastName = "Clauser"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            FirstName = "Anton",
+                            LastName = "Zeilinger"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            FirstName = "Syukuro",
+                            LastName = "Manabe"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            FirstName = "Klaus",
+                            LastName = "Hasselmann"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            FirstName = "Giorgio",
+                            LastName = "Parisi"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            FirstName = "Roger",
+                            LastName = "Penrose"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            FirstName = "Reinhard",
+                            LastName = "Genzel"
+                        },
+                        new
+                        {
+                            Id = 9,
+                            FirstName = "Andrea",
+                            LastName = "Ghez"
+                        },
+                        new
+                        {
+                            Id = 10,
+                            FirstName = "James",
+                            LastName = "Peebles"
+                        },
+                        new
+                        {
+                            Id = 11,
+                            FirstName = "Michel",
+                            LastName = "Mayor"
+                        },
+                        new
+                        {
+                            Id = 12,
+                            FirstName = "Didier",
+                            LastName = "Queloz"
+                        },
+                        new
+                        {
+                            Id = 13,
+                            FirstName = "Arthur",
+                            LastName = "Ashkin"
+                        },
+                        new
+                        {
+                            Id = 14,
+                            FirstName = "Gerard",
+                            LastName = "Mourou"
+                        },
+                        new
+                        {
+                            Id = 15,
+                            FirstName = "Donna",
+                            LastName = "Strickland"
+                        });
                 });
 
             modelBuilder.Entity("University.Core.Models.Group", b =>
