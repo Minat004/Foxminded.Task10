@@ -1,0 +1,52 @@
+﻿<Window x:Class="University.WPF.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:University.WPF.ViewModels"
+        xmlns:uc="clr-namespace:University.WPF.Views.UserControls"
+        xmlns:gview="clr-namespace:University.WPF.Views.UserControls.GroupViews"
+        xmlns:cview="clr-namespace:University.WPF.Views.UserControls.CourseViews"
+        xmlns:studentViews="clr-namespace:University.WPF.Views.UserControls.StudentViews"
+        xmlns:teacherViews="clr-namespace:University.WPF.Views.UserControls.TeacherViews"
+        xmlns:groupViewModels="clr-namespace:University.WPF.ViewModels.GroupViewModels"
+        xmlns:studentViewModels="clr-namespace:University.WPF.ViewModels.StudentViewModels"
+        xmlns:courseViewModels="clr-namespace:University.WPF.ViewModels.CourseViewModels"
+        xmlns:teacherViewModels="clr-namespace:University.WPF.ViewModels.TeacherViewModels"
+        mc:Ignorable="d"
+        Title="University" Height="450" Width="800"
+        d:DataContext="{d:DesignInstance Type=vm:MainWindowViewModel}"
+        FontSize="18">
+    
+    <Window.Resources>
+        <DataTemplate DataType="{x:Type courseViewModels:CourseWorkSpaceViewModel}">
+            <cview:CourseWorkSpaceView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type courseViewModels:CourseViewModel}">
+            <gview:GroupDataGridView Collection="{Binding Groups.Result}"/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type groupViewModels:GroupViewModel}">
+            <studentViews:StudentDataGridView Collection="{Binding Students.Result}"/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type teacherViewModels:TeacherViewModel}">
+            <teacherViews:TeacherDataGridView Collection="{Binding Teachers.Result}"/>
+        </DataTemplate>
+    </Window.Resources>
+    
+    <Grid ShowGridLines="False">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        
+        <uc:NavigationView Grid.Row="0"
+                           DataContext="{Binding Menu}"/>
+        
+        <ContentControl Grid.Row="1"
+                        Content="{Binding Menu.SelectedMenuItem}"/>
+        
+    </Grid>
+</Window>
