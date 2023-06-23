@@ -1,27 +1,15 @@
 ﻿using System;
-using System.ComponentModel;
 using System.Windows;
-using Microsoft.Extensions.Configuration;
-using University.Core.Interfaces;
-using University.Core.Models;
+using Microsoft.Extensions.DependencyInjection;
 using University.WPF.ViewModels;
 
 namespace University.WPF.Views;
 
 public partial class MainWindow
 {
-    public MainWindow(
-        ICourseService<Course> courseService,
-        IGroupService<Group> groupService,
-        IStudentService<Student> studentService,
-        ITeacherService<Teacher> teacherService,
-        IDialogService dialogService,
-        IPdfService pdfService,
-        ICsvService csvService,
-        IConfiguration configuration)
+    public MainWindow()
     {
-        DataContext = new MainWindowViewModel(courseService, groupService, studentService, 
-            teacherService, dialogService, pdfService, configuration, csvService);
+        DataContext = App.AppHost!.Services.GetRequiredService<MainWindowViewModel>();
         InitializeComponent();
     }
 

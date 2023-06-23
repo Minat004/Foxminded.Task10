@@ -1,27 +1,15 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using Microsoft.Extensions.Configuration;
-using University.Core.Interfaces;
-using University.Core.Models;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace University.WPF.ViewModels;
 
 public partial class MainWindowViewModel : ObservableObject
 {
 
-    public MainWindowViewModel(
-        ICourseService<Course> courseService,
-        IGroupService<Group> groupService,
-        IStudentService<Student> studentService,
-        ITeacherService<Teacher> teacherService,
-        IDialogService dialogService,
-        IPdfService pdfService,
-        IConfiguration configuration,
-        ICsvService csvService)
+    public MainWindowViewModel()
     {
-        Menu = 
-            new NavigationViewModel(
-                courseService, groupService, studentService, teacherService, dialogService, csvService, pdfService, configuration);
+        Menu = App.AppHost!.Services.GetRequiredService<NavigationViewModel>();
     }
 
-    public NavigationViewModel Menu { get; }
+    public NavigationViewModel? Menu { get; }
 }

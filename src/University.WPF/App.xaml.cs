@@ -10,13 +10,15 @@ using University.Core.Services;
 using University.Infrastructure.Data;
 using University.Infrastructure.Repositories;
 using University.WPF.Services;
+using University.WPF.ViewModels;
+using University.WPF.ViewModels.CourseViewModels;
 using University.WPF.Views;
 
 namespace University.WPF;
 
 public partial class App
 {
-    private IHost? AppHost { get; }
+    internal static IHost? AppHost { get; set; }
 
     public App()
     {
@@ -32,8 +34,10 @@ public partial class App
                 services.AddDbContextFactory<UniversityDbContext>(options =>
                     options.UseSqlServer(hostContext.Configuration.GetConnectionString("UniversityConnection")));
 
+                // Views
                 services.AddScoped<MainWindow>();
 
+                // Services
                 services.AddScoped<IDialogService, DialogService>();
                 services.AddScoped<ICourseService<Course>, CourseService>();
                 services.AddScoped<ICourseRepository<Course>, CourseRepository>();
@@ -45,6 +49,11 @@ public partial class App
                 services.AddScoped<ITeacherService<Teacher>, TeacherService>();
                 services.AddScoped<ICsvService, CsvService>();
                 services.AddScoped<IPdfService, PdfService>();
+                
+                // ViewModels
+                services.AddTransient<MainWindowViewModel>();
+                services.AddTransient<CourseViewModel>();
+                services.AddTransient<NavigationViewModel>();
             })
             .Build();
     }

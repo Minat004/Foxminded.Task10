@@ -7,7 +7,7 @@ using University.Core.Interfaces;
 using University.Core.Models;
 using University.WPF.ViewModels.CourseViewModels;
 using University.WPF.ViewModels.GroupViewModels;
-using University.WPF.ViewModels.StudentViewModels;
+using University.WPF.ViewModels.TeacherViewModels;
 
 namespace University.WPF.ViewModels;
 
@@ -62,13 +62,13 @@ public partial class NavigationViewModel : ObservableObject
                 _courseService, _groupService, _studentService, _teacherService, _dialogService,
                 _csvService, _pdfService, _configuration, 0, items![0]),
             
-            new CourseViewModel(new Course(){Id = 1, Name = items[1]}, _courseService, _groupService, _studentService,
+            new CourseViewModel(new Course {Id = 1, Name = items[1]}, _courseService, _groupService, _studentService,
                 _teacherService, _dialogService, _csvService, _pdfService, _configuration),
             
             new GroupViewModel(_groupService, _studentService,
                 _dialogService, _csvService, _pdfService, _configuration, new Group { Id = 2, Name = items[2]}),
             
-            new TeacherViewModels.TeacherViewModel(_teacherService, _dialogService, new Teacher {Id = 3, FirstName = items[3]})
+            new TeacherViewModel(_teacherService, _dialogService, new Teacher {Id = 3, FirstName = items[3]})
         };
 
         return result;
